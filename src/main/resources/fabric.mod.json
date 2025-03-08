@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "baspig_utils",
+  "version": "${version}",
+  "name": "Baspig Utils",
+  "description": "Baspig_'s mods api",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/baspig_utils/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "baspig.apis.utils.client.Baspig_utilsClient"
+    ],
+    "main": [
+      "baspig.apis.utils.Baspig_utils"
+    ]
+  },
+  "mixins": [
+    "baspig_utils.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
