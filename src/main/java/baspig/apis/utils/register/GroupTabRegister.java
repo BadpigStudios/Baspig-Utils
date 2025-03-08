@@ -1,7 +1,6 @@
 package baspig.apis.utils.register;
 
 import baspig.apis.utils.Baspig_utils;
-import baspig.apis.utils.TEST;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.Item;
@@ -13,15 +12,10 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class GroupTabRegister {
 
-    static Random random = new Random();
     private final String modId;
     private final String translatableText;
     private final Item tabIcon;
@@ -54,9 +48,7 @@ public class GroupTabRegister {
         Registry.register(Registries.ITEM_GROUP, customItemGroupKey, customItemGroup);
         ItemGroupEvents.modifyEntriesEvent(customItemGroupKey).register(itemGroup -> itemGroup.addAll(listItems));
     }
-
-    /**
-     * This class add your items to a creative inventory tab
+    /**This class add your items to a creative inventory tab
      * @param mod_id Your mod-id
      * @param tabNameTranslatable the name in the lang file, e.g: "item_group.your_mod.blocks"
      * @param tabIcon The icon item that will be shown in the tab
@@ -65,7 +57,7 @@ public class GroupTabRegister {
      *                  This is important, because you can't add more than one tab with the same mod-id
      *                  But this already handles it
      */
-    public static void create(String mod_id, String tabNameTranslatable, Item tabIcon, List<ItemStack> itemsToAdd, byte tabNumber) {
+    public static void create( String mod_id, String tabNameTranslatable, Item tabIcon, List<ItemStack> itemsToAdd, byte tabNumber) {
         new GroupTabRegister(mod_id, tabNameTranslatable, tabIcon, itemsToAdd, tabNumber).register();
     }
 }
