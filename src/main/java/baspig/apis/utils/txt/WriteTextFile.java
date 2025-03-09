@@ -4,6 +4,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * This class is for fast .txt files writing
+ * Json support in the future
+ */
+@SuppressWarnings("unused")
 public class WriteTextFile {
 
     /**This only works with text of a single line

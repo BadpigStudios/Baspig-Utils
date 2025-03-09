@@ -3,6 +3,11 @@ package baspig.apis.utils.txt;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * This class is for generate .txt files for fast read
+ * In the future I will add json system
+ */
+@SuppressWarnings("unused")
 public class GenerateTextFile {
 
 

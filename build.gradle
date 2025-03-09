@@ -12,7 +12,6 @@ base {
 
 
 repositories {
-
 }
 
 dependencies {
@@ -22,6 +21,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
+    }
 }
 
 processResources {
@@ -66,19 +71,3 @@ jar {
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        create("mavenJava", MavenPublication) {
-            groupId = 'baspig.apis.utils'
-            artifactId = 'baspig_utils'
-            version = '1.0'
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-
-    }
-}

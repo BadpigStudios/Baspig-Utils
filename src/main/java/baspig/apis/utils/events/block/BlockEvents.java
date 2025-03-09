@@ -4,6 +4,7 @@ import baspig.apis.utils.events.item.ItemEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.registry.tag.TagKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -16,9 +17,9 @@ public class BlockEvents {
      * @param block A list of blocks that will drop an in item on break
      * @param item A list of items that the block will drop on break
      * */
-    public static void onBlockDestroyed(@NotNull Block block,@NotNull Item item){
+    public static void onBlockDestroyed(@NotNull Block block,@NotNull Item item, TagKey<Item> toolTag){
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-            if(blockState.getBlock() == block){
+            if(blockState.getBlock() == block && playerEntity.getMainHandStack().isIn(toolTag)){
                 ItemEvents.createWorldItem(world, blockPos, item.getDefaultStack());
             }
         });
@@ -29,11 +30,11 @@ public class BlockEvents {
      * @param items A list of items that the block will drop on break
      * @param rate Chance to drop the item
      */
-    public static void onBlockDestroyed(Block blocks, Item items, float rate){
+    public static void onBlockDestroyed(Block blocks, Item items, TagKey<Item> toolTag, float rate){
         assert blocks != null;
         assert items != null;
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-            if(blockState.getBlock() == blocks){
+            if(blockState.getBlock() == blocks && playerEntity.getMainHandStack().isIn(toolTag)){
                 if(random.nextFloat(0, 1) * 100  < rate){
                     ItemEvents.createWorldItem(world, blockPos, items.getDefaultStack());
                 }
@@ -41,17 +42,18 @@ public class BlockEvents {
         });
     }
 
+
     /**
      * @param blocks A list of blocks that will drop an in item on break
      * @param items A list of items that the block will drop on break
      * @param rate Chance to drop the item
      * @param quantity How many items the block will drop
      */
-    public static void onBlockDestroyed(Block blocks, Item items, float rate, int quantity){
+    public static void onBlockDestroyed(Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity){
         assert blocks != null;
         assert items != null;
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-            if(blockState.getBlock() == blocks){
+            if(blockState.getBlock() == blocks && playerEntity.getMainHandStack().isIn(toolTag)){
                 if(random.nextFloat(0, 1) * 100 < rate){
                     for(int i = 0; i <= quantity; i++){
                         ItemEvents.createWorldItem(world, blockPos, items.getDefaultStack());
@@ -68,18 +70,18 @@ public class BlockEvents {
      * @param quantity How many items the block will drop
      * @param randomDrops make the block drop a random quantity of max in quantity
      */
-    public static void onBlockDestroyed(Block blocks, Item items, float rate, int quantity, boolean randomDrops){
+    public static void onBlockDestroyed(Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity, boolean randomDrops){
         assert blocks != null;
         assert items != null;
         int randomDrop = quantity / random.nextInt(1, quantity);
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-            if(blockState.getBlock() == blocks){
+            if(blockState.getBlock() == blocks && playerEntity.getMainHandStack().isIn(toolTag)){
                 if(random.nextFloat(0, 1) * 100 < rate && randomDrops){
                     for(int i = 0; i <= randomDrop; i++){
                         ItemEvents.createWorldItem(world, blockPos, items.getDefaultStack());
                     }
                 }else {
-                    onBlockDestroyed(blocks, items, rate, quantity);
+                    onBlockDestroyed(blocks, items, toolTag, rate, quantity);
                 }
             }
         });
@@ -93,7 +95,7 @@ public class BlockEvents {
      * @param randomDrops make the block drop a random quantity of max in quantity
      * @param minDrop Minimum amount of items that will be dropped
      */
-    public static void onBlockDestroyed(Block blocks, Item items, float rate, int quantity, boolean randomDrops, int minDrop){
+    public static void onBlockDestroyed(Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity, boolean randomDrops, int minDrop){
         assert blocks != null;
         assert items != null;
         int extra_drops = quantity - minDrop;
@@ -109,10 +111,10 @@ public class BlockEvents {
                             ItemEvents.createWorldItem(world, blockPos, items.getDefaultStack());
                         }
                     } else {
-                        onBlockDestroyed(blocks, items, rate);
+                        onBlockDestroyed(blocks, items, toolTag, rate);
                     }
                 }else {
-                    onBlockDestroyed(blocks, items, rate);
+                    onBlockDestroyed(blocks, items, toolTag, rate);
                 }
             }
         });
@@ -126,13 +128,13 @@ public class BlockEvents {
      * @param items A list of items that the block will drop on break
      * @param rate Chance to drop the item
      */
-    public static void onBlockDestroyedAdvanced(boolean dropsInCreative, Block blocks, Item items, float rate){
+    public static void onBlockDestroyedAdvanced(boolean dropsInCreative, Block blocks, Item items, TagKey<Item> toolTag,  float rate){
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
             if(playerEntity.isInCreativeMode() && dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate);
             }
             if(!playerEntity.isInCreativeMode() && !dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate);
             }
         });
     }
@@ -146,13 +148,13 @@ public class BlockEvents {
      * @param rate Chance to drop the item
      * @param quantity How many items the block will drop
      */
-    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, float rate, int quantity){
+    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity){
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
             if(playerEntity.isInCreativeMode() && dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity);
             }
             if(!playerEntity.isInCreativeMode() && !dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity);
             }
         });
     }
@@ -165,13 +167,13 @@ public class BlockEvents {
      * @param quantity How many items the block will drop
      * @param randomDrops make the block drop a random quantity of max in quantity
      */
-    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, float rate, int quantity, boolean randomDrops){
+    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity, boolean randomDrops){
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
             if(playerEntity.isInCreativeMode() && dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity ,randomDrops);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity ,randomDrops);
             }
             if(!playerEntity.isInCreativeMode() && !dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity, randomDrops);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity, randomDrops);
             }
         });
     }
@@ -185,13 +187,13 @@ public class BlockEvents {
      * @param randomDrops make the block drop a random quantity of max in quantity
      * @param minDrop Minimum amount of items that will be dropped
      */
-    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, float rate, int quantity, boolean randomDrops, int minDrop){
+    public static void onBlockDestroyed(boolean dropsInCreative, Block blocks, Item items, TagKey<Item> toolTag, float rate, int quantity, boolean randomDrops, int minDrop){
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
             if(playerEntity.isInCreativeMode() && dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity ,randomDrops, minDrop);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity ,randomDrops, minDrop);
             }
             if(!playerEntity.isInCreativeMode() && !dropsInCreative){
-                BlockEvents.onBlockDestroyed(blocks, items, rate, quantity, randomDrops, minDrop);
+                BlockEvents.onBlockDestroyed(blocks, items, toolTag, rate, quantity, randomDrops, minDrop);
             }
         });
     }

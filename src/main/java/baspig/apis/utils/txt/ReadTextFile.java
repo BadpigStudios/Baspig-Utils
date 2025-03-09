@@ -5,6 +5,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * This class is for fast .txt files reading
+ * Json support in the future
+ */
+@SuppressWarnings("unused")
 public class ReadTextFile {
 
     /**

@@ -15,6 +15,9 @@
     ],
     "main": [
       "baspig.apis.utils.Baspig_utils"
+    ],
+    "fabric-datagen": [
+      "baspig.apis.utils.register.DataGenerator"
     ]
   },
   "mixins": [
