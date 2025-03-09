@@ -14,8 +14,8 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class GroupTabRegister {
-
     private final String modId;
     private final String translatableText;
     private final Item tabIcon;

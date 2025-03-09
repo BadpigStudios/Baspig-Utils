@@ -7,6 +7,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 
+@SuppressWarnings("unused")
 @Environment(EnvType.CLIENT)
 public class GuiTexture {
 

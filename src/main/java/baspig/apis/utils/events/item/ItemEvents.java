@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+@SuppressWarnings("unused")
 public class ItemEvents {
     public static void createWorldItem(World world, BlockPos pos, ItemStack itemStack) {
         if (!itemStack.isEmpty()) {
