@@ -1,13 +1,20 @@
 package baspig.apis.utils.events.entity;
 
 import baspig.apis.utils.events.item.ItemEvents;
+import baspig.apis.utils.util.Bpu;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+
+/**
+ * @author Baspig_
+ */
 @SuppressWarnings("unused")
 public class EntityEvents {
     static Random random = new Random();
@@ -17,11 +24,7 @@ public class EntityEvents {
      * @param item The item that will be dropped
      */
     public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item){
-        ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
-            if(livingEntity.getType() == entity){
-                ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
-            }
-        });
+        entityDropSettings.put(entity, new EntityEvents.AdvancedDropSettings(item, 100, 1, false, 1));
     }
 
     /**
@@ -30,79 +33,90 @@ public class EntityEvents {
      * @param rate Is the probability of the item of being dropped
      */
     public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate){
-        ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
-            if(livingEntity.getType() == entity){
-                if(random.nextFloat(0,100) < rate){
-                    ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
-                }
-            }
-        });
+        entityDropSettings.put(entity, new EntityEvents.AdvancedDropSettings(item, rate, 1, false, 1));
     }
 
     /**
      * @param entity The entity that will drop the item
      * @param item The item that will be dropped
      * @param rate Is the probability of the item of being dropped
-     * @param quantity Is the amount of items that will be dropped
+     * @param amount Is the amount of items that will be dropped
      */
-    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int quantity){
-        ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
-            if(livingEntity.getType() == entity){
-                if(random.nextFloat(0,100) < rate){
-                    for(int i = 0; i < quantity; i++){
-                        ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
-                    }
-                }
-            }
-        });
+    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int amount){
+        entityDropSettings.put(entity, new EntityEvents.AdvancedDropSettings(item, rate, amount, false, 1));
     }
 
     /**
      * @param entity The entity that will drop the item
      * @param item The item that will be dropped
      * @param rate Is the probability of the item of being dropped
-     * @param quantity Is the amount of items that will be dropped
+     * @param amount Is the amount of items that will be dropped
+     * @param randomDrops make the block drop a random amount
      */
-    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int quantity, boolean randomDrops){
-        int randomDrop = quantity / random.nextInt(1, quantity);
-        ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
-            if(livingEntity.getType() == entity){
-                if(random.nextFloat(0,100) < rate){
-                    for(int i = 0; i < randomDrop; i++){
-                        ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
-                    }
-                } else {
-                    EntityEvents.spawnItemOnEntityDeath(entity, item, rate, quantity);
-                }
-            }
-        });
+    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int amount, boolean randomDrops){
+        entityDropSettings.put(entity, new EntityEvents.AdvancedDropSettings(item, rate, amount, randomDrops, 1));
     }
 
     /**
      * @param entity The entity that will drop the item
      * @param item The item that will be dropped
      * @param rate Is the probability of the item of being dropped
-     * @param quantity Is the amount of items that will be dropped
+     * @param amount Is the amount of items that will be dropped
+     * @param randomDrops make the block drop a random amount
+     * @param minDrop Minimum amount of items that will be dropped
      */
-    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int quantity,boolean randomDrops,  int minDrop){
-        int extra_drops = quantity - minDrop;
-        int extra = random.nextInt(0, extra_drops);
+    public static void spawnItemOnEntityDeath(@NotNull EntityType<? extends LivingEntity> entity, Item item, float rate, int amount, boolean randomDrops,  int minDrop){
+        entityDropSettings.put(entity, new EntityEvents.AdvancedDropSettings(item, rate, amount, randomDrops, 1));
+    }
+
+
+    /// ----------------------------------------------------------------------------------------------------------------
+    private static final Map<EntityType<?>, EntityEvents.AdvancedDropSettings> entityDropSettings = new HashMap<>();
+
+    /**
+     * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHER TO MALFUNCTION!!
+     */
+    private static void KillEvent() {
         ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
-            if(livingEntity.getType() == entity){
-                if(random.nextFloat(0,100) < rate){
-                    if(minDrop <= quantity){
-                        for(int i = 0; i <= minDrop; i++){
-                            ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
+
+            EntityType<?> entity = livingEntity.getType();
+
+            if (entityDropSettings.containsKey(entity)) {
+                EntityEvents.AdvancedDropSettings settings = entityDropSettings.get(entity);
+                if(random.nextFloat(0,100) < settings.rate){
+                    if(settings.minDrop < settings.amount){
+
+                        int extra = (settings.amount > settings.minDrop) ? random.nextInt(settings.amount - settings.minDrop) : 0;
+                        int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
+
+                        for (int i = 0; i < dropAmount; i++) {
+                            ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), settings.item.getDefaultStack());
                         }
 
-                        for(int i = 0; i < extra; i++){
-                            ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), item.getDefaultStack());
-                        }
-                    } else {
-                        EntityEvents.spawnItemOnEntityDeath(entity, item, rate, quantity);
+                        Bpu.LOG.info("Entity Killed");
                     }
                 }
             }
         });
+    }
+
+    private static class AdvancedDropSettings {
+        Item item;
+        float rate;
+        int amount;
+        boolean randomDrops;
+        int minDrop;
+
+        AdvancedDropSettings(@NotNull Item item, float rate, int amount, boolean randomDrops, int minDrop) {
+            this.item = item;
+            this.rate = rate;
+            this.amount = amount;
+            this.randomDrops = randomDrops;
+            this.minDrop = minDrop;
+        }
+    }
+
+    public static void BlockEventsRegistry(){
+        KillEvent();
     }
 }

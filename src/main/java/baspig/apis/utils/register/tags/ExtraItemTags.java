@@ -43,16 +43,22 @@ public class ExtraItemTags {
     public static final TagKey<Item> DIAMOND_SWORD_TOOL_LEVEL = of("diamond_sword_tool_level");
     public static final TagKey<Item> NETHERITE_SWORD_TOOL_LEVEL = of("netherite_sword_tool_level");
 
-    public static final TagKey<Item> WOODEN_ANY_TOOL_LEVEL = of("wooden_any_tool_level");
-    public static final TagKey<Item> STONE_ANY_TOOL_LEVEL = of("stone_any_tool_level");
-    public static final TagKey<Item> GOLD_ANY_TOOL_LEVEL = of("gold_any_tool_level");
-    public static final TagKey<Item> IRON_ANY_TOOL_LEVEL = of("iron_any_tool_level");
-    public static final TagKey<Item> DIAMOND_ANY_TOOL_LEVEL = of("diamond_any_tool_level");
-    public static final TagKey<Item> NETHERITE_ANY_TOOL_LEVEL = of("netherite_any_tool_level");
+    public static final TagKey<Item> ANY_WOODEN_TOOL = of("wooden_any_tool");
+    public static final TagKey<Item> ANY_STONE_TOOL = of("stone_any_tool");
+    public static final TagKey<Item> ANY_GOLD_TOOL = of("gold_any_tool");
+    public static final TagKey<Item> ANY_IRON_TOOL = of("iron_any_tool");
+    public static final TagKey<Item> ANY_DIAMOND_TOOL = of("diamond_any_tool");
+    public static final TagKey<Item> ANY_NETHERITE_TOOL = of("netherite_any_tool");
 
-    public static final TagKey<Item> HAND_TOOL_LEVEL = of("hand_tool_level");
+    /**
+     * !!DO NOT USE THIS TAG OUTSIDE BASPIG UTILS LIBRARY!!
+     * <p>
+     * You need special config to make it work properly!!
+     */
+    public static final TagKey<Item> NO_TOOL_LEVEL = of("no_item_tag");
 
-    public ExtraItemTags() {}
+    public ExtraItemTags() {
+    }
 
     private static TagKey<Item> of(String id) {
         return TagKey.of(RegistryKeys.ITEM, Identifier.of(Baspig_utils.MOD_ID,id));

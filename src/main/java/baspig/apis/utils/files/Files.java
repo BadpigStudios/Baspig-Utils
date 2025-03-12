@@ -12,7 +12,7 @@ public class Files {
      * @param path Path the file. E.g: "config/my_mod"
      * @param file Name of the file. E.g; "should_spawn_spiders.txt"
      */
-    private void create(String path ,String file){
+    public static void create(String path ,String file){
         try {
             File myObj = new File(path + "/"+ file);
             if (myObj.createNewFile()) {

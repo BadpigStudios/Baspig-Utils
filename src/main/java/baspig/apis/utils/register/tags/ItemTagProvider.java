@@ -17,46 +17,46 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider{
 
         /// -----------------------------------------------------------------------------------
 
-        getOrCreateTagBuilder(ExtraItemTags.WOODEN_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_WOODEN_TOOL)
                 .addTag(ExtraItemTags.WOODEN_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.WOODEN_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.WOODEN_PICKAXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.WOODEN_SHOVEL_TOOL_LEVEL)
-                .addTag(ExtraItemTags.STONE_ANY_TOOL_LEVEL);
+                .addTag(ExtraItemTags.ANY_STONE_TOOL);
 
-        getOrCreateTagBuilder(ExtraItemTags.STONE_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_STONE_TOOL)
                 .addTag(ExtraItemTags.STONE_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.STONE_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.STONE_PICKAXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.STONE_SHOVEL_TOOL_LEVEL)
                 .addTag(ExtraItemTags.STONE_HOE_TOOL_LEVEL)
-                .addTag(ExtraItemTags.GOLD_ANY_TOOL_LEVEL);
+                .addTag(ExtraItemTags.ANY_GOLD_TOOL);
 
-        getOrCreateTagBuilder(ExtraItemTags.GOLD_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_GOLD_TOOL)
                 .addTag(ExtraItemTags.GOLD_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.GOLD_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.GOLD_PICKAXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.GOLD_SHOVEL_TOOL_LEVEL)
                 .addTag(ExtraItemTags.GOLD_HOE_TOOL_LEVEL)
-                .addTag(ExtraItemTags.IRON_ANY_TOOL_LEVEL);
+                .addTag(ExtraItemTags.ANY_IRON_TOOL);
 
-        getOrCreateTagBuilder(ExtraItemTags.IRON_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_IRON_TOOL)
                 .addTag(ExtraItemTags.IRON_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.IRON_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.IRON_PICKAXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.IRON_SHOVEL_TOOL_LEVEL)
                 .addTag(ExtraItemTags.IRON_HOE_TOOL_LEVEL)
-                .addTag(ExtraItemTags.DIAMOND_ANY_TOOL_LEVEL);
+                .addTag(ExtraItemTags.ANY_DIAMOND_TOOL);
 
-        getOrCreateTagBuilder(ExtraItemTags.DIAMOND_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_DIAMOND_TOOL)
                 .addTag(ExtraItemTags.DIAMOND_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.DIAMOND_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.DIAMOND_PICKAXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.DIAMOND_SHOVEL_TOOL_LEVEL)
                 .addTag(ExtraItemTags.DIAMOND_HOE_TOOL_LEVEL)
-                .addTag(ExtraItemTags.NETHERITE_ANY_TOOL_LEVEL);
+                .addTag(ExtraItemTags.ANY_NETHERITE_TOOL);
 
-        getOrCreateTagBuilder(ExtraItemTags.NETHERITE_ANY_TOOL_LEVEL)
+        getOrCreateTagBuilder(ExtraItemTags.ANY_NETHERITE_TOOL)
                 .addTag(ExtraItemTags.NETHERITE_AXE_TOOL_LEVEL)
                 .addTag(ExtraItemTags.NETHERITE_SWORD_TOOL_LEVEL)
                 .addTag(ExtraItemTags.NETHERITE_PICKAXE_TOOL_LEVEL)
@@ -192,7 +192,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider{
         getOrCreateTagBuilder(ExtraItemTags.NETHERITE_SWORD_TOOL_LEVEL)
                 .add(Items.NETHERITE_SWORD);
 
-        getOrCreateTagBuilder(ExtraItemTags.HAND_TOOL_LEVEL);
+        getOrCreateTagBuilder(ExtraItemTags.NO_TOOL_LEVEL);
 
 
     }

@@ -16,7 +16,7 @@ public class TextFile {
     public static void create(String fileName){
         for (int i = 1; i > 0; i--){
             try {
-                File myObj = new File("config/" + fileName +".txt");
+                File myObj = new File("config/" + (fileName.replaceAll("/", "")) + ".txt");
                 if (myObj.createNewFile()) {
                     System.out.println("Files created: " + myObj.getName());
                 } else {
@@ -35,7 +35,7 @@ public class TextFile {
     public static void create(String path, String fileName){
         for (int i = 1; i > 0; i--){
             try {
-                File myObj = new File( path + "/" + fileName +".txt");
+                File myObj = new File( path + "/" + (fileName.replaceAll("/", "")) + ".txt");
                 if (myObj.createNewFile()) {
                     System.out.println("Files created: " + myObj.getName());
                 } else {
@@ -53,7 +53,7 @@ public class TextFile {
      */
     public static String read(String fileToRead){
         try {
-            FileReader reader = new FileReader("config/" + fileToRead + ".txt");
+            FileReader reader = new FileReader("config/" + (fileToRead.replaceAll("/", "")) + ".txt");
             BufferedReader bufferedReader = new BufferedReader(reader);
             String line;
             if((line = bufferedReader.readLine()) != null) {
@@ -88,7 +88,7 @@ public class TextFile {
             }
         }else {
             try {
-                FileReader reader = new FileReader(path + "/" + fileToRead+ ".txt");
+                FileReader reader = new FileReader(path + "/" + (fileToRead.replaceAll("/", "")) + ".txt");
                 BufferedReader bufferedReader = new BufferedReader(reader);
                 String line;
                 if((line = bufferedReader.readLine()) != null) {
@@ -109,7 +109,7 @@ public class TextFile {
      */
     public static void writer(String fileToWrite, String textToWrite, boolean append){
         try {
-            FileWriter writer = new FileWriter("config/" + fileToWrite + ".txt", append);
+            FileWriter writer = new FileWriter("config/" + (textToWrite.replaceAll("/", "")) + ".txt", append);
             writer.write(textToWrite);
             writer.close();
         } catch (IOException e) {
@@ -126,7 +126,7 @@ public class TextFile {
     public static void writer(String path, String fileToWrite, String textToWrite, boolean append){
         if(Objects.equals(path, "")){
             try {
-                FileWriter writer = new FileWriter(path + fileToWrite + ".txt", append);
+                FileWriter writer = new FileWriter(path + (textToWrite.replaceAll("/", "")) + ".txt", append);
                 writer.write(textToWrite);
                 writer.close();
             } catch (IOException e) {
