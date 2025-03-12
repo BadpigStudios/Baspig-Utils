@@ -4,6 +4,7 @@ This part of Baspig's mods - In development
 
 or add this into the build.gradle file:
 
+```
 repositories {
     maven { url 'https://jitpack.io' }
     mavenCentral()
@@ -13,3 +14,4 @@ dependencies {
 	        modImplementation "com.github.BadpigStudios:Baspig-Utils:0.0.6"
           include "com.github.BadpigStudios:Baspig-Utils:0.0.6"
 }
+```
