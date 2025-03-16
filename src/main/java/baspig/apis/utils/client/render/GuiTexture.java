@@ -17,7 +17,7 @@ public class GuiTexture {
 
     /**This method renderers an opaque background texture in the main menu
      * ¡It doesn't override any texture!
-     * @param context You must provide the drawContext in the caller method
+     * @param context You must provide the DrawContext in the caller method
      * @param modId this is the mod-id for the texture path
      * @param texturePath This the texture file path. E.g: "gui/especial_image_file"
      */
@@ -36,7 +36,7 @@ public class GuiTexture {
 
     /**This method renderers an opaque background texture in the main menu
      * ¡It doesn't override any texture!
-     * @param context You must provide the drawContext in the caller method
+     * @param context You must provide the DrawContext in the caller method
      * @param modId this is the mod-id for the texture path
      * @param texturePath This the texture file path. E.g: "gui/especial_image_file"
      */
@@ -48,7 +48,7 @@ public class GuiTexture {
 
     /**This method renderers a background texture in the main menu
      * ¡It doesn't override any texture!
-     * @param context You must provide the drawContext in the caller method
+     * @param context You must provide the DrawContext in the caller method
      * @param modId this is the mod-id for the texture path
      * @param texturePath This the texture file path. E.g: "gui/especial_image_file"
      */
@@ -67,7 +67,7 @@ public class GuiTexture {
 
     /**This method renderers a background texture in the main menu
      * ¡It doesn't override any texture!
-     * @param context You must provide the drawContext in the caller method
+     * @param context You must provide the DrawContext in the caller method
      * @param modId this is the mod-id for the texture path
      * @param texturePath This the texture file path. E.g: "gui/especial_image_file"
      * @param x is the x start point texture size, 0 = left top screen border
@@ -81,6 +81,17 @@ public class GuiTexture {
                 texture, x, y, 1,1, Max_x, Max_y, Max_x + 1,Max_y + 1 );
     }
 
+    /**This method renderers a background texture in the main menu
+     * ¡It doesn't override any texture!
+     * @param context You must provide the DrawContext in the caller method
+     * @param modId this is the mod-id for the texture path
+     * @param texturePath This the texture file path. E.g: "gui/especial_image_file"
+     * @param x is the x start point texture size, 0 = left top screen border
+     * @param y is the y start point texture size, 0 = left top screen border
+     * @param Max_x is the x max point texture size
+     * @param Max_y is the y max point texture size
+     * @param customRenderLayer It's which vanilla render layer you want to use for the texture rendering
+     */
     public static void renderBackground(DrawContext context, String modId,String texturePath, short x, short y, short Max_x, short Max_y, RenderLayer customRenderLayer){
         Identifier texture = Identifier.of(modId, "textures/"+ texturePath + ".png");
         context.drawTexture((id) -> customRenderLayer,

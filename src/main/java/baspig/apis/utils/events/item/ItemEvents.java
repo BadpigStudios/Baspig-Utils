@@ -1,6 +1,6 @@
 package baspig.apis.utils.events.item;
 
-import baspig.apis.utils.util.Bpu;
+import baspig.apis.utils.util.BP;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -27,7 +27,7 @@ public class ItemEvents {
                     itemStack
             ));
         }else {
-            Bpu.LOG.info("A exception occurred at: createWorldItem \n" +
+            BP.LOG.info("A exception occurred at: createWorldItem \n" +
                     "ItemStack is empty."
             );
         }

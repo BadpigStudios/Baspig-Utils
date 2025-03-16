@@ -10,6 +10,7 @@ public class Baspig_utils implements ModInitializer {
 
     public static final String MOD_ID = "baspig_utils";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
     @Override
     public void onInitialize() {
 
@@ -18,8 +19,5 @@ public class Baspig_utils implements ModInitializer {
 
         LOGGER.info("Baspig Library at your service");
 
-
-
     }
-
 }

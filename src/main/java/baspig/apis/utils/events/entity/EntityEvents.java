@@ -1,7 +1,6 @@
 package baspig.apis.utils.events.entity;
 
 import baspig.apis.utils.events.item.ItemEvents;
-import baspig.apis.utils.util.Bpu;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -74,7 +73,7 @@ public class EntityEvents {
     private static final Map<EntityType<?>, EntityEvents.AdvancedDropSettings> entityDropSettings = new HashMap<>();
 
     /**
-     * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHER TO MALFUNCTION!!
+     * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHERS TO MALFUNCTION!!
      */
     private static void KillEvent() {
         ServerLivingEntityEvents.AFTER_DEATH.register((livingEntity, damageSource) -> {
@@ -86,14 +85,12 @@ public class EntityEvents {
                 if(random.nextFloat(0,100) < settings.rate){
                     if(settings.minDrop < settings.amount){
 
-                        int extra = (settings.amount > settings.minDrop) ? random.nextInt(settings.amount - settings.minDrop) : 0;
+                        int extra = random.nextInt(settings.amount - settings.minDrop);
                         int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
 
                         for (int i = 0; i < dropAmount; i++) {
                             ItemEvents.createWorldItem(livingEntity.getWorld(), livingEntity.getBlockPos(), settings.item.getDefaultStack());
                         }
-
-                        Bpu.LOG.info("Entity Killed");
                     }
                 }
             }

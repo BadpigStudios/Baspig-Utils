@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Random;
 
 /**This class gives you some easy config block events
- *
  * @author Baspig_
  */
 @SuppressWarnings("unused")

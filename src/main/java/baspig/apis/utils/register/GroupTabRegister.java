@@ -21,7 +21,6 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class GroupTabRegister {
-    private final String modId;
     private final String translatableText;
     private final Item tabIcon;
     private final List<ItemStack> listItems;
@@ -29,14 +28,14 @@ public class GroupTabRegister {
     private final ItemGroup customItemGroup;
 
     private GroupTabRegister(@NotNull String mod_id, String tabName, Item tabIcon, List<ItemStack> itemsToAdd, byte tabNumber) {
-        this.modId = mod_id + tabNumber;
+        String modId = mod_id + tabNumber;
         this.translatableText = tabName;
         this.tabIcon = tabIcon;
         this.listItems = itemsToAdd;
 
         this.customItemGroupKey = RegistryKey.of(
                 Registries.ITEM_GROUP.getKey(),
-                Identifier.of(this.modId, "item_group")
+                Identifier.of(modId, "item_group")
         );
 
         this.customItemGroup = FabricItemGroup.builder()
@@ -47,7 +46,7 @@ public class GroupTabRegister {
 
     public void register() {
 
-        Baspig_utils.LOGGER.info("Adding Tab " + translatableText);
+        Baspig_utils.LOGGER.info("Adding Tab: {}", translatableText);
 
         Registry.register(Registries.ITEM_GROUP, customItemGroupKey, customItemGroup);
         ItemGroupEvents.modifyEntriesEvent(customItemGroupKey).register(itemGroup -> itemGroup.addAll(listItems));
@@ -55,7 +54,7 @@ public class GroupTabRegister {
 
     /**This class add your items to a creative inventory tab.
      * @param mod_id Your mod-id
-     * @param tabName the name of the tab. ❗❗ It will LOG the ID for the LANG file ❗❗
+     * @param tabName the name of the tab.
      * @param tabIcon The icon item that will be shown in the tab
      * @param itemsToAdd A list of items that will be added to this specific tab
      * @param tabNumber This handles up to 256 unique tabs per mod-id (-128 to 127), you must choose one id per tab.

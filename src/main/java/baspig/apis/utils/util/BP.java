@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
  * Quick logger
  * @author Baspig_
  */
-public class Bpu {
+public class BP {
     public static final Logger LOG = LoggerFactory.getLogger(Baspig_utils.MOD_ID);
+
+
 }
