@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 
-
 /**This class is an additions for a faster trim pattern registering.
  * <p>
  * This MAY actually cause problems if you try to modify it later, but I'm not sure.
@@ -42,13 +41,11 @@ public class TrimPattern implements DataGeneratorEntrypoint {
 
     private static void bootstrap(Registerable<ArmorTrimPattern> registry) {
         register(registry, Item, PATTERN_REGISTRY_KEY);
-
     }
 
     private static void register(Registerable<ArmorTrimPattern> registry, Item item, RegistryKey<ArmorTrimPattern> key) {
         ArmorTrimPattern armorTrimPattern = new ArmorTrimPattern(
                 key.getValue(),
-                Registries.ITEM.getEntry(item),
                 Text.translatable(Util.createTranslationKey("trim_pattern", key.getValue())),
                 false
         );
