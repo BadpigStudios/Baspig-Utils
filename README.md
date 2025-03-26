@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-	  modImplementation "com.github.BadpigStudios:Baspig-Utils:0.0.6"
-          include "com.github.BadpigStudios:Baspig-Utils:0.0.6"
+	  modImplementation "com.github.BadpigStudios:Baspig-Utils:0.0.7"
+          include "com.github.BadpigStudios:Baspig-Utils:0.0.7"
 }
 ```
