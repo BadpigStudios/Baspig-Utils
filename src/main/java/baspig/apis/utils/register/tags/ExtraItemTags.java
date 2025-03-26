@@ -50,8 +50,18 @@ public class ExtraItemTags {
     public static final TagKey<Item> ANY_DIAMOND_TOOL = of("diamond_any_tool");
     public static final TagKey<Item> ANY_NETHERITE_TOOL = of("netherite_any_tool");
 
+    public static final TagKey<Item> ALL_MINERAL = of("all_mineral");
+    public static final TagKey<Item> RAW_MINERAL = of("raw_mineral");
+    public static final TagKey<Item> SMELTED_MINERAL = of("smelted_mineral");
+    public static final TagKey<Item> NATURAL_MINERAL = of("natural_mineral");
+    public static final TagKey<Item> SMELTED_AND_NATURAL_MINERAL = of("smelted_and_natural_mineral");
+
+    public static final TagKey<Item> MOB_HEADS = of("mob_heads");
+    public static final TagKey<Item> TORCHES = of("torches");
+    public static final TagKey<Item> EXPLOSIVE_BLOCKS = of("explosive_blocks");
+
     /**
-     * !!DO NOT USE THIS TAG OUTSIDE BASPIG UTILS LIBRARY!!
+     * !!USUALLY THIS TAG DOESN'T DO ANYTHING!!
      * <p>
      * You need special config to make it work properly!!
      */

@@ -175,7 +175,7 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider{
 
         getOrCreateTagBuilder(ExtraItemTags.STONE_SWORD_TOOL_LEVEL)
                 .add(Items.STONE_SWORD)
-                .addTag(ExtraItemTags.STONE_SWORD_TOOL_LEVEL);
+                .addTag(ExtraItemTags.GOLD_SWORD_TOOL_LEVEL);
 
         getOrCreateTagBuilder(ExtraItemTags.GOLD_SWORD_TOOL_LEVEL)
                 .add(Items.GOLDEN_SWORD)
@@ -194,6 +194,79 @@ public class ItemTagProvider extends FabricTagProvider.ItemTagProvider{
 
         getOrCreateTagBuilder(ExtraItemTags.NO_TOOL_LEVEL);
 
+        getOrCreateTagBuilder(ExtraItemTags.MOB_HEADS)
+                .add(Items.CREEPER_HEAD)
+                .add(Items.DRAGON_HEAD)
+                .add(Items.PIGLIN_HEAD)
+                .add(Items.ZOMBIE_HEAD)
+                .add(Items.SKELETON_SKULL)
+                .add(Items.WITHER_SKELETON_SKULL)
+                .add(Items.PLAYER_HEAD);
+
+        getOrCreateTagBuilder(ExtraItemTags.TORCHES)
+                .add(Items.TORCH)
+                .add(Items.REDSTONE_TORCH)
+                .add(Items.SOUL_TORCH);
+
+        getOrCreateTagBuilder(ExtraItemTags.EXPLOSIVE_BLOCKS)
+                .add(Items.TNT)
+                .add(Items.RESPAWN_ANCHOR);
+
+        getOrCreateTagBuilder(ExtraItemTags.ALL_MINERAL)
+                .add(Items.COAL)
+                .add(Items.RAW_COPPER)
+                .add(Items.RAW_IRON)
+                .add(Items.RAW_GOLD)
+                .add(Items.LAPIS_LAZULI)
+                .add(Items.DIAMOND)
+                .add(Items.REDSTONE)
+                .add(Items.NETHERITE_SCRAP)
+                .add(Items.EMERALD)
+
+                .add(Items.COPPER_INGOT)
+                .add(Items.IRON_INGOT)
+                .add(Items.GOLD_INGOT)
+
+                .add(Items.NETHERITE_INGOT);
+
+        getOrCreateTagBuilder(ExtraItemTags.RAW_MINERAL)
+                .add(Items.COAL)
+                .add(Items.RAW_COPPER)
+                .add(Items.RAW_IRON)
+                .add(Items.RAW_GOLD)
+                .add(Items.LAPIS_LAZULI)
+                .add(Items.DIAMOND)
+                .add(Items.REDSTONE)
+                .add(Items.NETHERITE_SCRAP)
+                .add(Items.EMERALD);
+
+        getOrCreateTagBuilder(ExtraItemTags.SMELTED_MINERAL)
+
+                .add(Items.COPPER_INGOT)
+                .add(Items.IRON_INGOT)
+                .add(Items.GOLD_INGOT)
+
+                .add(Items.NETHERITE_INGOT);
+
+        getOrCreateTagBuilder(ExtraItemTags.SMELTED_AND_NATURAL_MINERAL)
+                .add(Items.COAL)
+                .add(Items.LAPIS_LAZULI)
+                .add(Items.DIAMOND)
+                .add(Items.REDSTONE)
+                .add(Items.EMERALD)
+
+                .add(Items.COPPER_INGOT)
+                .add(Items.IRON_INGOT)
+                .add(Items.GOLD_INGOT)
+
+                .add(Items.NETHERITE_INGOT);
+
+        getOrCreateTagBuilder(ExtraItemTags.NATURAL_MINERAL)
+                .add(Items.COAL)
+                .add(Items.LAPIS_LAZULI)
+                .add(Items.DIAMOND)
+                .add(Items.REDSTONE)
+                .add(Items.EMERALD);
 
     }
 }

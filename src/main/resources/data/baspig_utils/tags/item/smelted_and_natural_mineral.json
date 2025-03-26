@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:coal",
+    "minecraft:lapis_lazuli",
+    "minecraft:diamond",
+    "minecraft:redstone",
+    "minecraft:emerald",
+    "minecraft:copper_ingot",
+    "minecraft:iron_ingot",
+    "minecraft:gold_ingot",
+    "minecraft:netherite_ingot"
+  ]
+}

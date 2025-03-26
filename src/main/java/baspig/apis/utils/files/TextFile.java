@@ -1,7 +1,15 @@
 package baspig.apis.utils.files;
 
+import baspig.apis.utils.util.BP;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
+
+import static baspig.apis.utils.util.BP.LOG;
 
 /**
  * This class is for generate, read, and write .txt files
@@ -11,22 +19,6 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class TextFile {
 
-    /**@param fileName This only needs the file name, it will automatically put a .txt fill into "config/"
-     */
-    public static void create(String fileName){
-        for (int i = 1; i > 0; i--){
-            try {
-                File myObj = new File("config/" + (fileName.replaceAll("/", "")) + ".txt");
-                if (myObj.createNewFile()) {
-                    System.out.println("Files created: " + myObj.getName());
-                } else {
-                    System.out.println("Files already exists.");
-                }
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-            }
-        }
-    }
 
     /**@param path This is the folders where the file will be put in, example: mods/my_mod/rain
      *                Is not necessary to put the final slash bar.
@@ -42,7 +34,7 @@ public class TextFile {
                     System.out.println("Files already exists.");
                 }
             } catch (IOException e) {
-                System.out.println("An error occurred.");
+                BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
             }
         }
     }
@@ -61,7 +53,7 @@ public class TextFile {
             }
             reader.close();
         } catch (IOException e) {
-            System.out.println("An error occurred while executing fileRead");
+            BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
         }
         return null;
     }
@@ -84,7 +76,7 @@ public class TextFile {
                 }
                 reader.close();
             } catch (IOException e) {
-                System.out.println("An error occurred while executing fileRead");
+                BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
             }
         }else {
             try {
@@ -96,7 +88,7 @@ public class TextFile {
                 }
                 reader.close();
             } catch (IOException e) {
-                System.out.println("An error occurred while executing fileRead");
+                BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
             }
         }
         return null;
@@ -107,13 +99,17 @@ public class TextFile {
      * @param textToWrite It will be the text for read, if not found exactly what is assigned it will
      * @param append This means that the text will be added if it's true else will overwrite
      */
-    public static void writer(String fileToWrite, String textToWrite, boolean append){
+    public static void write(String fileToWrite, String textToWrite, boolean append){
         try {
+            File myObj = new File("config/" + (fileToWrite.replaceAll("/", "")) + ".txt");
+            if (myObj.createNewFile()) {
+                BP.LOG.info("File created successfully");
+            }
             FileWriter writer = new FileWriter("config/" + (textToWrite.replaceAll("/", "")) + ".txt", append);
             writer.write(textToWrite);
             writer.close();
         } catch (IOException e) {
-            System.out.println("An error occurred while executing fileWriter");
+            BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
         }
     }
 
@@ -123,23 +119,51 @@ public class TextFile {
      * @param textToWrite It will be the text for read, if not found exactly what is assigned it will
      * @param append This means that the text will be added if it's true else will overwrite
      */
-    public static void writer(String path, String fileToWrite, String textToWrite, boolean append){
-        if(Objects.equals(path, "")){
-            try {
-                FileWriter writer = new FileWriter(path + (textToWrite.replaceAll("/", "")) + ".txt", append);
-                writer.write(textToWrite);
-                writer.close();
-            } catch (IOException e) {
-                System.out.println("An error occurred while executing fileWriter");
+    public static void write(String path, String fileToWrite, @NotNull String textToWrite, boolean append){
+        FileUtils.fixPath(path);
+        try {
+            File myObj = new File( path + "/" + (fileToWrite.replaceAll("/", "")) + ".txt");
+            if (myObj.createNewFile()) {
+                BP.LOG.info("|write| File created successfully");
             }
-        }else {
-            try {
-                FileWriter writer = new FileWriter(path + "/" + fileToWrite + ".txt", append);
-                writer.write(textToWrite);
-                writer.close();
-            } catch (IOException e) {
-                System.out.println("An error occurred while executing fileWriter");
-            }
+            FileWriter writer = new FileWriter(path + (textToWrite.replaceAll("/", "")) + ".txt", append);
+            writer.write(textToWrite);
+            writer.close();
+        } catch (IOException e) {
+            BP.LOG.info("An error occurred while executing fileWriter: {}\nCaused by: {}", e.getMessage(), e.getCause());
+        }
+    }
+
+
+    /**
+     * Deletes a TXT file if it exists.
+     *
+     * @param file The actual file to delete.
+     * By default, executed into run folder
+     */
+    public synchronized static void delete(String file) {
+        Path txtFile = Paths.get(file + ".txt");
+        try {
+            Files.delete(txtFile);
+            LOG.info("|txt-delete| Successfully deleted file: {}", txtFile.toAbsolutePath());
+        } catch (IOException e) {
+            LOG.error("|txt-delete| Failed to delete file: {}", txtFile.toAbsolutePath(), e);
+        }
+    }
+
+    /**
+     * Deletes a TXT file if it exists.
+     *
+     * @param path Path to the folder where the file is located.
+     * @param file The actual file to delete.
+     */
+    public synchronized static void delete(String path, String file) {
+        Path txtFile = Paths.get(path, file + ".txt");
+        try {
+            Files.delete(txtFile);
+            LOG.info("|txt-delete | Successfully deleted file: {}", txtFile.toAbsolutePath());
+        } catch (IOException e) {
+            LOG.error("|txt-delete| Failed to delete file: {}", txtFile.toAbsolutePath(), e);
         }
     }
 }

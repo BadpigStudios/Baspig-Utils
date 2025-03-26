@@ -10,6 +10,4 @@ import org.slf4j.LoggerFactory;
  */
 public class BP {
     public static final Logger LOG = LoggerFactory.getLogger(Baspig_utils.MOD_ID);
-
-
 }

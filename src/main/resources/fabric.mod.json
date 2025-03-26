@@ -7,7 +7,7 @@
   "authors": [],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/baspig_utils/temp_icon.png",
+  "icon": "assets/baspig_utils/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [

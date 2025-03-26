@@ -9,6 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,41 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class BlockEvents {
     static Random random = new Random();
+
+    /**
+     * @param world Current world
+     * @param pos Block position
+     * @param block Actual block to compare
+     * @return This returns true if it detects a block
+     */
+    public static boolean nextBlockIs(World world, BlockPos pos,Block block){
+        BlockPos[] directions = {
+                pos.up(),
+                pos.down(),
+                pos.north(),
+                pos.south(),
+                pos.east(),
+                pos.west()
+        };
+
+        for (BlockPos adjacentPos : directions) {
+            if (world.getBlockState(adjacentPos).getBlock() == block) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBlockInDirection(World world, BlockPos pos, Block block, Direction direction) {
+        return switch (direction) {
+            case UP -> world.getBlockState(pos.add(0, 1, 0)).getBlock() == block;
+            case DOWN -> world.getBlockState(pos.add(0, -1, 0)).getBlock() == block;
+            case NORTH -> world.getBlockState(pos.add(0, 0, 1)).getBlock() == block;
+            case SOUTH -> world.getBlockState(pos.add(0, 0, -1)).getBlock() == block;
+            case EAST -> world.getBlockState(pos.add(1, 0, 0)).getBlock() == block;
+            case WEST -> world.getBlockState(pos.add(-1, 0, 0)).getBlock() == block;
+        };
+    }
 
     /**
      * @param block Is a block that will drop an in item on break
