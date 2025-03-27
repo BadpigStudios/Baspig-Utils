@@ -12,6 +12,10 @@ repositories {
 
 dependencies {
 	  modImplementation "com.github.BadpigStudios:Baspig-Utils:0.0.8"
-          include "com.github.BadpigStudios:Baspig-Utils:0.0.8"
+          include "com.github.BadpigStudios:Baspig-Utils:0.0.8-1.21.5"
 }
 ```
+
+Every version after '0.0.8', <p>
+needs this format {lib version}-{minecraft version}
+Example '0.0.8-1.21.5'
