@@ -15,6 +15,7 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class GuiTexture {
 
+
     /**This method renderers an opaque background texture in the main menu
      * ¡It doesn't override any texture!
      * @param context You must provide the DrawContext in the caller method

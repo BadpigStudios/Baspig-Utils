@@ -39,7 +39,7 @@ public class DimensionData {
     }
 
     /**
-     * Checks if the dimension in the given world has skylight
+     * Checks if the dimension in the given world has skylight.
      *
      * @param world The current world to check the dimension
      * @return True if it has skylight, false if not
@@ -49,7 +49,7 @@ public class DimensionData {
     }
 
     /**
-     * Checks if the dimension in the given world has ceiling
+     * Checks if the dimension in the given world has ceiling.
      *
      * @param world The current world to check the dimension
      * @return True if it has ceiling, false if not
@@ -59,7 +59,7 @@ public class DimensionData {
     }
 
     /**
-     * Checks if the dimension in the given world the beds work (Do not explode)
+     * Checks if the dimension in the given world the beds work (Do not explode).
      *
      * @param world The current world to check the dimension
      * @return True if the beds work in it, false if it doesn't

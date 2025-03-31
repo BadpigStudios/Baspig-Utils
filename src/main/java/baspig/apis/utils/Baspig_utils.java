@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings(value = {"deprecation"})
 public class Baspig_utils implements ModInitializer {
 
-    public static final String MOD_ID = "baspig_utils", MOD_NAME = "Baspig Utils Lib";
+    public static final String MOD_ID = "baspig_utils", MOD_NAME = "Baspig Utils Lib 0.0.9";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override

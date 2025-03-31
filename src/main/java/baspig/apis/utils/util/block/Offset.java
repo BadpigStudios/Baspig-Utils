@@ -12,7 +12,6 @@ import java.util.Random;
 public class Offset {
 
     private final Random random = new Random();
-
     private final int x;
     private final int y;
     private final int z;

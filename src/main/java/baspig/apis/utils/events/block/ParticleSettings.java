@@ -22,6 +22,7 @@ public class ParticleSettings{
     private final int height;
     private final Offset offset;
 
+
     /**
      * This lightly process data for particles math
      *

@@ -6,4 +6,5 @@ public enum UpdateMode {
     REPLACE,
     ADD_AND_UPDATE,
     NOTHING
+
 }

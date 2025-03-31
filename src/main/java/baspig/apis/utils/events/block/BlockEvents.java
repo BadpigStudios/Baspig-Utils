@@ -49,7 +49,7 @@ public class BlockEvents {
             double y = pos.getY() + 0.5 + face.getOffsetY() * 0.51 + (face.getOffsetY() == 0 ? (random.nextDouble() - 0.5) * spread : 0);
             double z = pos.getZ() + 0.5 + face.getOffsetZ() * 0.51 + (face.getOffsetZ() == 0 ? (random.nextDouble() - 0.5) * spread : 0);
 
-            world.addParticleClient(particle, x, y, z, 0, 0, 0);
+            world.addParticle(particle, x, y, z, 0, 0, 0);
 
         }
     }
@@ -90,90 +90,90 @@ public class BlockEvents {
                     XVelocity = velocityX;
                     YVelocity = velocityY;
                     ZVelocity = velocityZ;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case RANDOM:
                     XVelocity = (-random.nextFloat() + random.nextFloat());
                     YVelocity = (-random.nextFloat() + random.nextFloat());
                     ZVelocity = (-random.nextFloat() + random.nextFloat());
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case UPWARD:
                     YVelocity = 0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case UPWARD_SLOW:
                     YVelocity = 0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case UPWARD_CUSTOM_VELOCITY:
                     YVelocity = velocityY;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
 
                 case DOWNWARD:
                     YVelocity = -0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case DOWNWARD_SLOW:
                     YVelocity = -0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case DOWNWARD_CUSTOM_VELOCITY:
                     YVelocity = -velocityY;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
 
                 case EASTWARD:
                     XVelocity = 0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case EASTWARD_SLOW:
                     XVelocity = 0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case EASTWARD_CUSTOM_VELOCITY:
                     XVelocity = velocityX;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
 
                 case WESTWARD:
                     XVelocity = -0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case WESTWARD_SLOW:
                     XVelocity = -0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case WESTWARD_CUSTOM_VELOCITY:
                     XVelocity = -velocityX;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
 
                 case SOUTHWARD:
                     ZVelocity = 0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case SOUTHWARD_SLOW:
                     ZVelocity = 0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case SOUTHWARD_CUSTOM_VELOCITY:
                     ZVelocity = velocityX;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
 
                 case NORTHWARD:
                     ZVelocity = -0.25F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case NORTHWARD_SLOW:
                     ZVelocity = -0.05F;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
                 case NORTHWARD_CUSTOM_VELOCITY:
                     ZVelocity = -velocityX;
-                    world.addParticleClient(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
+                    world.addParticle(particle, x, y, z, XVelocity, YVelocity, ZVelocity);
                     break;
             }
         }
@@ -227,7 +227,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + cylinder_radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case CIRCLE_OUTLINE:
@@ -235,7 +235,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case SPHERE:
@@ -243,7 +243,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + sphere_radius * Math.cos(phi);
                     Z = pos.getZ() + 0.5 + sphere_radius * Math.sin(phi) * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SPHERE_OUTLINE:
                     double r = Math.sqrt(random.nextDouble()) * radius; ///Fill the sphere
@@ -252,7 +252,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + r * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case CYLINDER:
@@ -261,7 +261,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 - (height/2) + cylinder_height;
                     Z = pos.getZ() + 0.5 + cylinder_radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CYLINDER_OUTLINE:
 
@@ -287,7 +287,7 @@ public class BlockEvents {
                         Z = pos.getZ() + 0.5 + radius * Math.sin(angle);
                     }
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SQUARE:
 
@@ -295,7 +295,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SQUARE_OUTLINE:
                     double edge = random.nextDouble() * size - size / 2;
@@ -314,7 +314,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CUBE:
 
@@ -322,7 +322,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + yOffset;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CUBE_OUTLINE:
                     int axis = random.nextInt(3);
@@ -346,7 +346,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + yOffset;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
             }
 
@@ -400,7 +400,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + cylinder_radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case CIRCLE_OUTLINE:
@@ -408,7 +408,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case SPHERE:
@@ -417,7 +417,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + sphere_uniform * Math.cos(phi);
                     Z = pos.getZ() + 0.5 + sphere_uniform * Math.sin(phi) * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SPHERE_OUTLINE:
 
@@ -425,7 +425,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + radius * Math.cos(phi);
                     Z = pos.getZ() + 0.5 + radius * Math.sin(phi) * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
 
                 case CYLINDER:
@@ -434,7 +434,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 - (height/2) + cylinder_height;
                     Z = pos.getZ() + 0.5 + cylinder_radius * Math.sin(theta);
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CYLINDER_OUTLINE:
 
@@ -460,7 +460,7 @@ public class BlockEvents {
                         Z = pos.getZ() + 0.5 + radius * Math.sin(angle);
                     }
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SQUARE:
 
@@ -468,7 +468,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case SQUARE_OUTLINE:
                     double edge = random.nextDouble() * size - size / 2;
@@ -487,7 +487,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CUBE:
 
@@ -495,7 +495,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + yOffset;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
                 case CUBE_OUTLINE:
                     int axis = random.nextInt(3);
@@ -519,7 +519,7 @@ public class BlockEvents {
                     Y = pos.getY() + 0.5 + yOffset;
                     Z = pos.getZ() + 0.5 + zOffset;
 
-                    world.addParticleClient(particle, X, Y, Z, 0, 0, 0);
+                    world.addParticle(particle, X, Y, Z, 0, 0, 0);
                     break;
             }
 

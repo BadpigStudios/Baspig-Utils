@@ -15,4 +15,5 @@ public enum ShapeType {
 
     SPHERE,
     SPHERE_OUTLINE
+
 }

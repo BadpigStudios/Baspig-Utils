@@ -6,5 +6,6 @@ public class Baspig_utilsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+
     }
 }
