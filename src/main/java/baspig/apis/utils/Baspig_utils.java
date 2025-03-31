@@ -20,5 +20,4 @@ public class Baspig_utils implements ModInitializer {
         new IsRegAudio();
         LOGGER.info(MOD_NAME + " at your service");
     }
-
 }

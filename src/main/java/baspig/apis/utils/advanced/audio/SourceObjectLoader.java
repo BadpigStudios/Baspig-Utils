@@ -26,7 +26,7 @@ public class SourceObjectLoader {
                 BlockPos pos = entry.getKey();
                 SourceObjectData data = entry.getValue();
 
-                if (DimensionData.check(data.getDimension(), world) && world.isPosLoaded(pos)) {
+                if (DimensionData.checkIf(data.getDimension(), world) && world.isPosLoaded(pos)) {
                     if (data.getSoundEvent() != null) {
 
                         if(data.getCurrentTick() > data.getMaxTicks()){
