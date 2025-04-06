@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
  * What class is giving errors?
  * @author Baspig_
  */
+@SuppressWarnings("unused")
 public class BP {
 
     public static final Logger LOG = LoggerFactory.getLogger(Baspig_utils.MOD_ID);
@@ -156,7 +157,6 @@ public class BP {
             }
             /// Uses inner class LOGGER to log set up the message.
             return "[" + Class.getName() +" - " + methodName +"]-- " + messageAdditions;
-
         }
 
         /**
@@ -180,7 +180,7 @@ public class BP {
         }
     }
 
-    public interface LogOptions{
+    private interface LogOptions{
         void hasLog();
     }
 }

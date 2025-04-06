@@ -12,5 +12,4 @@ public class DataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(ItemTagProvider::new);
         pack.addProvider(BlockTagProvider::new);
     }
-
 }

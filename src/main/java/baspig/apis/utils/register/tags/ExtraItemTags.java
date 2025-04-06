@@ -60,16 +60,20 @@ public class ExtraItemTags {
     public static final TagKey<Item> TORCHES = of("torches");
     public static final TagKey<Item> EXPLOSIVE_BLOCKS = of("explosive_blocks");
 
-    /**
-     * !!USUALLY THIS TAG DOESN'T DO ANYTHING!!
-     * <p>
-     * You need special config to make it work properly!!
+    /**This tag can only be used with:
+     * <pre>{@code ItemEvents.playerHasInHand(PlayerEntity, ExtraItemTags.NO_TOOL_LEVEL);}</pre>
+     *
      */
     public static final TagKey<Item> NO_TOOL_LEVEL = of("no_item_tag");
 
     public ExtraItemTags() {
     }
 
+    /**
+     * Internal register for the item tags
+     * @param id ID of the tag, like: "explosive_blocks"
+     * @return The register to make it work
+     */
     private static TagKey<Item> of(String id) {
         return TagKey.of(RegistryKeys.ITEM, Identifier.of(Baspig_utils.MOD_ID,id));
     }
