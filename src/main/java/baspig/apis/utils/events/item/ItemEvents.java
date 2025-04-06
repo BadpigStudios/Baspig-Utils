@@ -1,9 +1,12 @@
 package baspig.apis.utils.events.item;
 
+import baspig.apis.utils.register.tags.ExtraItemTags;
 import baspig.apis.utils.util.BP;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -14,6 +17,10 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("unused")
 public class ItemEvents {
+
+    public static boolean playerHasInHand(PlayerEntity playerEntity, TagKey<Item> toolTag){
+        return playerEntity.getMainHandStack().isIn(toolTag) || toolTag == ExtraItemTags.NO_TOOL_LEVEL;
+    }
 
     /**
      * @param world Actual world where this method is called

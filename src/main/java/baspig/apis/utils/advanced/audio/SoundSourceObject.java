@@ -9,6 +9,9 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
+/**
+ * Manages the info about the source object and writes to save it into the minecraft folder
+ */
 public class SoundSourceObject {
 
     private static final String specialKeyAddition = "xor_Baspig_utils"; ///For a minimum default encrypt hardness
@@ -25,6 +28,20 @@ public class SoundSourceObject {
     private static SoundCategory SOUND_CATEGORY;
     private static int DURATION;
 
+
+    /***
+     *
+     * @param modId The id of the mod that creates new source objects.
+     * @param name Name of the source object.
+     * @param encryptKey The key to make sure user can't modify it. Al least easily.
+     * @param x The X coordinate of the object in the world.
+     * @param y The Y coordinate of the object in the world.
+     * @param z The Z coordinate of the object in the world.
+     * @param sound The actual sound that will be played in the world in the specified coordinates.
+     * @param category Category of the given sound.
+     * @param durationInTicks Offset in ticks of the sound delay between each play.
+     * @param dimension Dimension where the sound will be played.
+     */
     protected SoundSourceObject(String modId, String name, String encryptKey,
                                            int x, int y, int z,
                                            SoundEvent sound, SoundCategory category, int durationInTicks,
@@ -39,10 +56,12 @@ public class SoundSourceObject {
         DIMENSION = dimension;
 
         SOUND_CATEGORY = category;
-
         write();
     }
 
+    /**
+     * This writes/saves the info about the object using my own built JSON system with an encrypt key.
+     */
     private void write(){
         EasyJSON.write_encrypt(PATH, NAME,
                 List.of(
