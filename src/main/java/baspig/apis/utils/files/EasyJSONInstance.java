@@ -1,5 +1,6 @@
 package baspig.apis.utils.files;
 
+import baspig.apis.utils.util.BP;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -16,39 +17,100 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static baspig.apis.utils.util.BP.*;
+import static baspig.apis.utils.util.BP.LOG;
 
 /**
- * This class is made for quick and fast json file management.
- *
- * @author Baspig_
+ * Instantiable version of the {@link EasyJSON} class
+ * 
+ * @Author Baspig_
  */
 @SuppressWarnings("unused")
-public class EasyJSON {
+public class EasyJSONInstance {
 
-    private static final SerializationFeature SERIALIZATION_OUTPUT_INDENT = SerializationFeature.INDENT_OUTPUT;
+    private final String className;
+    private final String PATH;
+    private final String FILE;
+    private final String XOR_EncryptKey;
 
-    private static final int JSON_SIMPLE_TYPE = JSONParser.MODE_JSON_SIMPLE;
+    private final SerializationFeature SERIALIZATION_OUTPUT_INDENT = SerializationFeature.INDENT_OUTPUT;
+
+    private final int JSON_SIMPLE_TYPE = JSONParser.MODE_JSON_SIMPLE;
+
+    private String LOGGER;
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
+     * This is an instantiated version of EasyJSON utility class.
+     *
+     *
+     * @param path The path to the file. like: config/my_mod_folder
+     * @param file The actual file to create/modify/read or delete.
+     * @param loggerId The id for the log when something goes wrong.
+     */
+    public EasyJSONInstance(String path, String file, @Nullable String loggerId){
+        this.XOR_EncryptKey = null;
+        this.className = loggerId != null ? "EasyJSONInstance-" + loggerId : "EasyJSONInstance";
+        this.LOGGER = loggerId;
+        this.PATH = FileUtils.fixPath(path);
+        this.FILE = file;
+    }
+
+    public EasyJSONInstance(String path, String file, @Nullable String loggerId, String encrypt_key){
+        this.XOR_EncryptKey = encrypt_key;
+        this.className = loggerId != null ? "EasyJSONInstance-" + loggerId : "EasyJSONInstance";
+        this.LOGGER = loggerId;
+        this.PATH = FileUtils.fixPath(path);
+        this.FILE = file;
+    }
+
+    public EasyJSONInstance(Class<?> Class,String path, String file, @Nullable String loggerId){
+        this.XOR_EncryptKey = null;
+        this.className = loggerId != null ? Class.getName() + "-" + loggerId : "EasyJSONInstance";
+        this.PATH = FileUtils.fixPath(path);
+        this.FILE = file;
+    }
+
+    public EasyJSONInstance(Class<?> Class,String path, String file, @Nullable String loggerId, String encrypt_key){
+        this.XOR_EncryptKey = encrypt_key;
+        this.className = loggerId != null ? Class.getName() + "-" + loggerId : "EasyJSONInstance";
+        this.LOGGER = loggerId;
+        this.PATH = FileUtils.fixPath(path);
+        this.FILE = file;
+    }
+
+    public void changeLoggerId(String loggerId){
+        LOGGER = loggerId;
+    }
+
+    public String getLOGGER_ID(){
+        return LOGGER;
+    }
+
+    public String getPATH(){
+        return PATH;
+    }
+
+    public String getFILE(){
+        return FILE;
+    }
+
+    /**
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      *
      * @throws NullPointerException
      * If any argument is {@code null}
      */
-    public synchronized static void write(String path, String file, List<String> keys, List<Object> values) {
-        path = FileUtils.fixPath(path);
-        FileUtils.checkJSONArgsLength(keys, values, "write");
-
+    public synchronized void write(List<String> keys, List<Object> values) {
+        FileUtils.checkJSONArgsLength(keys, values, LOGGER + ": write");
         try {
-            File directory = new File(path);
-            if (!directory.exists() && !directory.mkdirs() && !path.isEmpty()) {
-                LOG.info("Already created - don't worry: {}", directory.getAbsolutePath());
+            File directory = new File(PATH);
+            if (!directory.exists() && !directory.mkdirs() && !PATH.isEmpty()) {
+
+                BP.fancyFileLog(className, "write", "Already created - don't worry", directory.getAbsolutePath());
                 return;
             }
 
@@ -65,25 +127,22 @@ public class EasyJSON {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SERIALIZATION_OUTPUT_INDENT);
 
-            File outputFile = new File(path + file + ".json");
+            File outputFile = new File(PATH + FILE + ".json");
 
             if (outputFile.exists()) {
-                LOG.info("|write| File already exists: {}", outputFile.getAbsolutePath());
+                BP.fancyFileLog(className, "write", "File already exists", directory.getAbsolutePath());
                 return;
             }
 
             mapper.writeValue(outputFile, orderedMap);
-
-            LOG.info("|write| Successfully wrote JSON file: {}", outputFile.getAbsolutePath());
+            BP.fancyFileLog(className, "write", "Successfully wrote JSON file", directory.getAbsolutePath());
 
         } catch (IOException e) {
-            LOG.info("|write| Failed to write JSON: {}", e.getMessage());
+            BP.fancyLog(className, "write", "Successfully wrote JSON file", e.getMessage());
         }
     }
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      * @param mode <pre>{@code
@@ -99,24 +158,23 @@ public class EasyJSON {
      *
      * @exception IllegalArgumentException If lists doesn't have the same length
      */
-    public synchronized static void write(String path, String file, List<String> keys, List<Object> values, UpdateMode mode) {
-        path = FileUtils.fixPath(path);
-        FileUtils.checkJSONArgsLength(keys, values, "write");
+    public synchronized void write(List<String> keys, List<Object> values, UpdateMode mode) {
+        FileUtils.checkJSONArgsLength(keys, values, LOGGER + ": write");
 
         try {
-            File directory = new File(path);
-            if (!directory.exists() && !directory.mkdirs() && !path.isEmpty()) {
-                LOG.info("|write-special| Failed to create directory: {}", directory.getAbsolutePath());
+            File directory = new File(PATH);
+            if (!directory.exists() && !directory.mkdirs() && !PATH.isEmpty()) {
+                BP.fancyFileLog(className, "write", "Failed to create directory", directory.getAbsolutePath());
                 return;
             }
 
-            String fullPath = path + file + ".json";
+            String fullPath = PATH + FILE + ".json";
             File outputFile = new File(fullPath);
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SERIALIZATION_OUTPUT_INDENT);
 
             if (mode == UpdateMode.NOTHING && outputFile.exists()) {
-                LOG.info("|write-special| File already exists, skipping due to NOTHING mode: {}", fullPath);
+                BP.fancyFileLog(className, "write", "File already exists, skipping due to NOTHING mode", directory.getAbsolutePath());
                 return;
             }
 
@@ -127,7 +185,7 @@ public class EasyJSON {
                     String content = new String(Files.readAllBytes(outputFile.toPath()));
                     currentData = mapper.readValue(content, new TypeReference<>() {});
                 } catch (IOException e) {
-                    LOG.warn("|write-special| Could not read existing JSON: {}", e.getMessage());
+                    BP.fancyFileLog(className, "write", "Could not read existing JSON", directory.getAbsolutePath());
                 }
             }
 
@@ -170,20 +228,18 @@ public class EasyJSON {
             }
 
             if (!changesDetected) {
-                LOG.info("|write-special| No changes detected, skipping write.");
+                BP.fancyFileLog(className, "write", "No changes detected, skipping write.", directory.getAbsolutePath());
                 return;
             }
 
             mapper.writeValue(outputFile, currentData);
-            LOG.info("|write-special| Successfully wrote JSON file: {}", fullPath);
+            BP.fancyFileLog(className, "write", "Successfully wrote JSON file", directory.getAbsolutePath());
         } catch (IOException e) {
-            LOG.warn("|write-special| Failed to write JSON: {}", e.getMessage());
+            BP.fancyLog(className, "write", "Failed to write JSON", e.getMessage());
         }
     }
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      * @param mode <pre>{@code
@@ -200,25 +256,24 @@ public class EasyJSON {
      *
      * @exception IllegalArgumentException If lists doesn't have the same length
      */
-    public synchronized static void write(String path, String file, List<String> keys, List<Object> values, UpdateMode mode, List<String> ignoredKeys) {
-        path = FileUtils.fixPath(path);
-        String title = "write-advanced";
+    public synchronized void write(List<String> keys, List<Object> values, UpdateMode mode, List<String> ignoredKeys) {
+        String title = LOGGER + ": write-advanced";
         FileUtils.checkJSONArgsLength(keys, values, title);
 
         try {
-            File directory = new File(path);
-            if (!directory.exists() && !directory.mkdirs() && !path.isEmpty()) {
-                LOG.info("{} Failed to create directory: {}", title, directory.getAbsolutePath());
+            File directory = new File(PATH);
+            if (!directory.exists() && !directory.mkdirs() && !PATH.isEmpty()) {
+                BP.fancyFileLog(className, "write", "Failed to create directory", directory.getAbsolutePath());
                 return;
             }
 
-            String fullPath = path + file + ".json";
+            String fullPath = PATH + FILE + ".json";
             File outputFile = new File(fullPath);
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SERIALIZATION_OUTPUT_INDENT);
 
             if (mode == UpdateMode.NOTHING && outputFile.exists()) {
-                LOG.info("{} File already exists, skipping due to NOTHING mode: {}", title, fullPath);
+                BP.fancyFileLog(className, "write", "File already exists, skipping due to NOTHING mode", directory.getAbsolutePath());
                 return;
             }
 
@@ -229,7 +284,7 @@ public class EasyJSON {
                     String content = new String(Files.readAllBytes(outputFile.toPath()));
                     currentData = mapper.readValue(content, new TypeReference<>() {});
                 } catch (IOException e) {
-                    LOG.warn("{} Could not read existing JSON: {}", title, e.getMessage());
+                    BP.fancyFileLog(className, "write", "Could not read existing JSON", directory.getAbsolutePath());
                 }
             }
 
@@ -275,14 +330,14 @@ public class EasyJSON {
             }
 
             if (!changesDetected) {
-                LOG.info("{} No changes detected, skipping write.", title);
+                BP.fancyLog(className, "write", "No changes detected, skipping write.", directory.getAbsolutePath());
                 return;
             }
 
             mapper.writeValue(outputFile, currentData);
-            LOG.info("{} Successfully wrote JSON file: {}", title, fullPath);
+            BP.fancyFileLog(className, "write", "Successfully wrote JSON file.", directory.getAbsolutePath());
         } catch (IOException e) {
-            LOG.warn("{} Failed to write JSON: {}", title, e.getMessage());
+            BP.fancyLog(className, "write", "Failed to write JSON", e.getMessage());
         }
     }
 
@@ -290,24 +345,21 @@ public class EasyJSON {
      * Replaces values in an existing JSON file while keeping the order of keys.
      * If the file does not exist, a new one will be created.
      *
-     * @param path   Path to the file.
-     * @param file   The actual file name (without extension).
      * @param keys   List of keys to be replaced in the JSON file.
      * @param values List of values to be replaced in the JSON file. <p>
      * <p>
      * Example: <pre>{@code key : "sound.id.namespace", "sound.id.path"
      * value: "minecraft", "entity.blaze.death"}</pre>
      */
-    public synchronized static void replace(String path, String file,List<String> keys,List<Object> values) {
-        path = FileUtils.fixPath(path);
+    public synchronized void replace(List<String> keys,List<Object> values) {
         FileUtils.checkJSONArgsLength(keys, values, "replace-multiple");
 
         try {
-            File directory = new File(path);
-            File jsonFile = new File(directory, file + ".json");
+            File directory = new File(PATH);
+            File jsonFile = new File(directory, FILE + ".json");
 
             if (!jsonFile.exists()) {
-                LOG.info("|replace-multiple| JSON file {} does not exist. No action taken.", jsonFile.getAbsolutePath());
+                BP.fancyFileLog(className, "replace", "JSON file does not exist. No action taken", directory.getAbsolutePath());
                 return;
             }
 
@@ -321,32 +373,29 @@ public class EasyJSON {
                 setValue(jsonMap, keyPath, values.get(i));
             }
 
-            File outputFile = new File(path + file + ".json");
+            File outputFile = new File(PATH + FILE + ".json");
             mapper.writeValue(outputFile, jsonMap);
 
         } catch (IOException e) {
-            LOG.warn("|replace-multiple|Failed to write JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "replace", "Failed to write JSON file", e.getMessage());
         }
     }
 
     /**
      * Replaces a value in an existing JSON file while keeping the order of keys.
      * If the file does not exist, a new one will be created.
-     *
-     * @param path   Path to the file.
-     * @param file   The actual file name (without extension).
+     *.
      * @param key    The key to be replaced in the JSON file.
      * @param value  The value to replace the existing value for the key.
      */
-    public synchronized static void replace(String path, String file, String key, Object value) {
-        path = FileUtils.fixPath(path);
+    public synchronized void replace(String key, Object value) {
 
         try {
-            File directory = new File(path);
-            File jsonFile = new File(directory, file + ".json");
+            File directory = new File(PATH);
+            File jsonFile = new File(directory, FILE + ".json");
 
             if (!jsonFile.exists()) {
-                LOG.warn("|replace-single|JSON file {} does not exist. No action taken.", jsonFile.getAbsolutePath());
+                BP.fancyFileLog(className, "replace", "JSON file does not exist. No action taken", directory.getAbsolutePath());
                 return;
             }
 
@@ -358,11 +407,11 @@ public class EasyJSON {
             String[] keyPath = key.split("\\.");
             setValue(jsonMap, keyPath, value);
 
-            File outputFile = new File(path + file + ".json");
+            File outputFile = new File(PATH + FILE + ".json");
             mapper.writeValue(outputFile, jsonMap);
 
         } catch (IOException e) {
-            LOG.warn("|replace-single| Failed to write JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "replace", "Failed to write JSON file", e.getMessage());
         }
     }
 
@@ -370,20 +419,17 @@ public class EasyJSON {
      * Replaces a value in an existing JSON file while keeping the order of keys.
      * If the file does not exist, a new one will be created.
      *
-     * @param path   Path to the file.
-     * @param file   The actual file name (without extension).
      * @param key    The key to be replaced in the JSON file.
      * @param value  The value to replace the existing value for the key.
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static void replace(String path, String file, String key, Object value, String encryptKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized void replace(String key, Object value, String encryptKey) {
         try {
-            File directory = new File(path);
-            File jsonFile = new File(directory, file + ".json");
+            File directory = new File(PATH);
+            File jsonFile = new File(directory, FILE + ".json");
 
             if (!jsonFile.exists()) {
-                LOG.warn("|replace-multiple-encrypt|JSON file {} does not exist. No action taken.", jsonFile.getAbsolutePath());
+                BP.fancyFileLog(className, "replace-encrypt", "JSON file does not exist. No action taken", directory.getAbsolutePath());
                 return;
             }
 
@@ -403,13 +449,13 @@ public class EasyJSON {
             Files.writeString(jsonFile.toPath(), encryptedJson);
 
         } catch (IOException e) {
-            LOG.warn("|replace-multiple-encrypt| Failed to write JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "replace-encrypt", "Failed to write JSON file", e.getMessage());
         }
     }
 
 
     @SuppressWarnings("unchecked")
-    private synchronized static void setValue(Map<String, Object> jsonMap, String @NotNull [] keys, Object value) {
+    private synchronized void setValue(Map<String, Object> jsonMap, String @NotNull [] keys, Object value) {
         Map<String, Object> currentMap = jsonMap;
         for (int i = 0; i < keys.length - 1; i++) {
             currentMap = (Map<String, Object>) currentMap.get(keys[i]);
@@ -419,81 +465,73 @@ public class EasyJSON {
 
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param key The key whose value needs to be read. "key":"value"
      *
      * @return The value associated with the key, or null if not found.
      */
-    public synchronized static @Nullable Object read(String path, String file, @NotNull String key) {
-        path = FileUtils.fixPath(path);
+    public synchronized @Nullable Object read( @NotNull String key) {
         try {
             JSONParser parser = new JSONParser(JSON_SIMPLE_TYPE);
-            Object current = parser.parse(new FileReader(path + file + ".json"));
+            Object current = parser.parse(new FileReader(PATH + FILE + ".json"));
 
             String[] keyParts = key.split("\\.");
             for (String k : keyParts) {
                 if (current instanceof JSONObject jsonObj) {
                     current = jsonObj.get(k);
                 } else {
-                    LOG.warn("|read| Key '{}' is not a valid JSON object", k);
+                    BP.fancyLog(className, "read", "Key '" + k + "' is not a valid JSON object");
                     return null;
                 }
                 if (current == null) {
-                    LOG.warn("|read| No key found: {}", k);
+                    BP.fancyLog(className, "read", "No key found: " + k);
                     return null;
                 }
             }
             return current;
         } catch (IOException | ParseException e) {
-            LOG.warn("|read| Failed to read JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "read", "Failed to read JSON file");
         }
         return null;
     }
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
+
      * @param key The key whose value needs to be read. "key":"value"
      *
      * @return The value associated with the key, or null if not found.
      */
-    private synchronized static @Nullable Object readObject(String path, String file, String key) {
-        path = FileUtils.fixPath(path);
+    private synchronized @Nullable Object readObject(String key) {
         try {
             JSONParser parser = new JSONParser(JSON_SIMPLE_TYPE);
-
-            Object current = parser.parse(new FileReader(path + file + ".json"));
+            Object current = parser.parse(new FileReader(PATH + FILE + ".json"));
 
             if (current instanceof JSONObject jsonNested) {
                 current = jsonNested.get(key);
             } else {
-                LOG.warn("|readObject| Key '{}' is not a valid JSON object", key);
+                BP.fancyFileLog(className, "readObject", "is not a valid JSON object: " + key);
                 return null;
             }
 
             if (current == null) {
-                LOG.warn("|readObject| Key '{}' is not a valid JSON object", key);
+                BP.fancyFileLog(className, "readObject", "is not a valid JSON object: " + key);
                 return null;
             }
             return current;
 
         } catch (IOException | ParseException e) {
-            LOG.warn("|readObject| Failed to read JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "readObject", "Failed to read JSON file: ", e.getMessage());
         }
         return null;
     }
 
     /**
      * This method returns a String, if it isn't a String, it will return "No key string found"
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public synchronized static String readString(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public synchronized String readString(String keys){
+        Object result = read(keys);
         if (result == null) {
-            return "|readString| No key string found";
+            return BP.Return.fancyLog(className, "readString", "No key string found");
         }
         return switch (result) {
             case String s -> s;
@@ -504,88 +542,79 @@ public class EasyJSON {
 
     /**
      * This method returns a Byte, if it isn't a Byte, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
+
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public synchronized static byte readByte(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public synchronized byte readByte(String keys){
+        Object result = read(keys);
         if (result instanceof Integer) {
             return ((Integer) result).byteValue();
         }else if (result instanceof Number) {
             return ((Number) result).byteValue();
         }else {
-            LOG.warn("|readByte| something went wrong");
+            BP.fancyLog(className, "readByte", "something went wrong");
             return 0;
         }
     }
 
     /**
      * This method returns a Short, if it isn't a Short, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public synchronized static short readShort(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public synchronized short readShort(String keys){
+        Object result = read(keys);
         if (result instanceof Integer) {
             return ((Integer) result).shortValue();
         }else if (result instanceof Number) {
             return ((Number) result).shortValue();
         }else {
-            LOG.warn("|readShort| something went wrong");
+            BP.fancyLog(className, "readShort", "something went wrong");
             return 0;
         }
     }
 
     /**
      * This method returns an Integer, if it isn't an Integer, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public synchronized static int readInt(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public synchronized int readInt(String keys){
+        Object result = read(keys);
         if (result instanceof Integer) {
             return (Integer) result;
         }else if (result instanceof Number) {
             return ((Number) result).intValue();
         }else {
-            LOG.warn("|readInt| something went wrong");
+            BP.fancyLog(className, "readInt", "something went wrong");
             return 0;
         }
     }
 
     /**
      * This method returns a Float, if it isn't a Float, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public static float readFloat(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public float readFloat(String keys){
+        Object result = read(keys);
         if (result instanceof Integer) {
             return ((Integer) result).floatValue();
         }else if (result instanceof Number) {
             return ((Number) result).floatValue();
         }else {
-            LOG.warn("|readFloat| something went wrong");
+            BP.fancyLog(className, "readFloat", "something went wrong");
             return 0;
         }
     }
 
     /**
      * This method returns a Boolean, if it isn't a Boolean, it will return false
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public static boolean readBoolean(String path, String file, String keys){
-        Object result = read(path, file, keys);
+    public boolean readBoolean(String keys){
+        Object result = read(keys);
         if(result != null){
             return (boolean) result;
         } else {
-            LOG.info("Boolean value from readBoolean is null!");
+            BP.fancyLog(className, "readBoolean", "Boolean value from readBoolean is null...\n switched to false!");
             return false;
         }
     }
@@ -599,7 +628,7 @@ public class EasyJSON {
      *
      * Method created to avoid
      */
-    public synchronized static @NotNull Object nestObject(List<String> keys, List<Object> values) {
+    public synchronized @NotNull Object nestObject(List<String> keys, List<Object> values) {
         FileUtils.checkJSONArgsLength(keys, values, "nestObject");
         JSONObject jsonObject = new JSONObject();
         for (int i = 0; i < keys.size(); i++) {
@@ -614,7 +643,7 @@ public class EasyJSON {
      * @param values List of values to be added.
      * @return A JSONArray containing the provided values.
      */
-    public synchronized static @NotNull JSONArray writeList(List<Object> values) {
+    public synchronized @NotNull JSONArray writeList(List<Object> values) {
         JSONArray jsonArray = new JSONArray();
         jsonArray.addAll(values);
         return jsonArray;
@@ -623,21 +652,17 @@ public class EasyJSON {
     /**
      * Replaces a value inside a JSON object within a list in a JSON file.
      *
-     * @param path     Path to the file.
-     * @param file     The actual file name.
      * @param listKeys  Path of keys of the list that contains the objects.
      * @param searchKey The key to search for inside the objects.
      * @param newValue The new value to set.
      */
     @SuppressWarnings("unchecked")
-    private synchronized static void replaceListValue(String path, String file, String searchKey, Object newValue, String... listKeys) {
-        path = FileUtils.fixPath(path);
-
+    private synchronized void replaceListValue(String searchKey, Object newValue, String... listKeys) {
         try {
-            File jsonFile = new File(path + file + ".json");
+            File jsonFile = new File(PATH + FILE + ".json");
 
             if (!jsonFile.exists()) {
-                LOG.info("JSON file {} does not exist. No action taken.", jsonFile.getAbsolutePath());
+                BP.fancyFileLog(className, "replaceListValue", "JSON file does not exist. No action taken", jsonFile.getAbsolutePath());
                 return;
             }
 
@@ -651,7 +676,7 @@ public class EasyJSON {
                 if (listObject instanceof Map<?, ?> map) {
                     listObject = map.get(key);
                 } else {
-                    LOG.info("|replaceListValue| Key '{}' is not a valid JSON object.", key);
+                    BP.fancyFileLog(className, "replaceListValue", "Key is "+ key +" not a valid JSON object", jsonFile.getAbsolutePath());
                     return;
                 }
             }
@@ -667,47 +692,45 @@ public class EasyJSON {
                     }
                 }
                 if (!updated) {
-                    LOG.info("Key '{}' not found in list '{}'", searchKey, listKeys[listKeys.length - 1]);
+                    BP.fancyFileLog(className, "replaceListValue", "Key "+ searchKey +" not found in list " + listKeys[listKeys.length - 1], jsonFile.getAbsolutePath());
                     return;
                 }
             } else {
-                LOG.info("|replaceListValue| The key '{}' does not point to a list.", listKeys[listKeys.length - 1]);
+                BP.fancyFileLog(className, "replaceListValue", "The key " + listKeys[listKeys.length - 1] + " does not point to a list", jsonFile.getAbsolutePath());
                 return;
             }
 
             mapper.writeValue(jsonFile, jsonMap);
+            BP.fancyFileLog(className, "replaceListValue", "The key " + listKeys[listKeys.length - 1] + " does not point to a list", jsonFile.getAbsolutePath());
+
             LOG.info("Successfully updated the JSON file.");
 
         } catch (IOException e) {
-            LOG.info("|replaceListValue| Failed to modify JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "replaceListValue", "Failed to modify JSON file", e.getMessage());
         }
     }
 
     /**
      * Reads and returns the entire list from a JSON object inside a list within a JSON file.
      *
-     * @param path     Path to the file.
-     * @param file     The actual file name.
      * @param keys  The key of the list that contains the objects.
      * @return The list found, null if not found.
      */
-    public synchronized static JSONArray readList(String path, String file, String... keys) {
-        path = FileUtils.fixPath(path);
+    public synchronized JSONArray readList(String... keys) {
         try {
             JSONParser parser = new JSONParser(JSON_SIMPLE_TYPE);
-
-            Object listObject = parser.parse(new FileReader(path + file + ".json"));
+            Object listObject = parser.parse(new FileReader(PATH + FILE + ".json"));
 
             for (String key : keys) {
                 if (listObject instanceof JSONObject jsonNested) {
                     listObject = jsonNested.get(key);
                 } else {
-                    LOG.info("|readList| Key '{}' is not a valid JSON object", key);
+                    BP.fancyFileLog(className, "readList", "Key is "+ key +" not a valid JSON object");
                     return null;
                 }
 
                 if (listObject == null) {
-                    System.out.println("No key found: " + key);
+                    BP.fancyFileLog(className, "readList", "No key found: " + key);
                     return null;
                 }
             }
@@ -715,34 +738,30 @@ public class EasyJSON {
             if (listObject instanceof JSONArray jsonArray) {
                 return jsonArray;
             } else {
-                LOG.info("|readList| The final object is not a JSONArray.");
+                BP.fancyFileLog(className, "readList", "The final object is not a JSONArray");
                 return null;
             }
         } catch (IOException | ParseException e) {
-            LOG.info("|readList| Failed to read JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "readList", "Failed to read JSON file", e.getMessage());
         }
         return null;
     }
 
 
     /**
-     * Deletes a JSON file if it exists.
-     *
-     * @param path Path to the folder where the file is located.
-     * @param file The actual file name.
+     * Deletes the JSON file if it exists.
      */
-    public synchronized static void delete(String path, String file) {
-        Path jsonFile = Paths.get(path, file + ".json");
+    public synchronized void delete() {
+        Path jsonFile = Paths.get(PATH, FILE + ".json");
         try {
             Files.delete(jsonFile);
-            LOG.info("Successfully deleted JSON file: {}", jsonFile.toAbsolutePath());
+            BP.fancyFileLog(className, "delete", "Successfully deleted JSON file", String.valueOf(jsonFile.toAbsolutePath()));
         } catch (IOException e) {
-            LOG.error("Failed to delete JSON file: {}", jsonFile.toAbsolutePath(), e);
+            BP.fancyLog(className, "delete", "Failed to delete JSON file", String.valueOf(jsonFile.toAbsolutePath()), e.getMessage());
         }
     }
 
-
-    private synchronized static @NotNull String xorEncryptAndDecrypt(@NotNull String input, String key) {
+    private synchronized @NotNull String xorEncryptAndDecrypt(@NotNull String input, String key) {
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             output.append((char)(input.charAt(i) ^ key.charAt(i % key.length())));
@@ -753,20 +772,16 @@ public class EasyJSON {
     /**
      * It just ensures your objects can't be accessed by the user
      *
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      * @param encryptKey Special key for file low security encryption
      */
-    public synchronized static void write_encrypt(String path, String file, List<String> keys, List<Object> values, String encryptKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized void write_encrypt(List<String> keys, List<Object> values, String encryptKey) {
         FileUtils.checkJSONArgsLength(keys, values, "writeAndEncrypt");
-
         try {
-            File directory = new File(path);
+            File directory = new File(PATH);
             if (!directory.exists() && !directory.mkdirs()) {
-                LOG.info("Failed to create special directory: {}", directory.getAbsolutePath());
+                BP.fancyFileLog(className, "write_encrypt", "Failed to create directory", directory.getAbsolutePath());
                 return;
             }
 
@@ -786,7 +801,7 @@ public class EasyJSON {
 
             String encryptedJson = xorEncryptAndDecrypt(jsonString, encryptKey);
 
-            String fullPath = path + file + ".json";
+            String fullPath = PATH + FILE + ".json";
             File outputFile = new File(fullPath);
 
             LOG.info(orderedMap.toString());
@@ -795,16 +810,14 @@ public class EasyJSON {
 
             Files.writeString(outputFile.toPath(), encryptedJson);
 
-            LOG.info("Successfully wrote JSON encrypted file: {}", outputFile.getAbsolutePath());
+            BP.fancyFileLog(className, "write_encrypt", "Successfully wrote JSON encrypted file", directory.getAbsolutePath());
 
         } catch (IOException e) {
-            LOG.info("Failed to write encrypted JSON: {}", e.getMessage());
+            BP.fancyLog(className, "write_encrypt", "Failed to write encrypted JSON", e.getMessage());
         }
     }
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      * @param mode <pre>{@code
@@ -821,25 +834,26 @@ public class EasyJSON {
      *
      * @exception IllegalArgumentException If lists doesn't have the same length
      */
-    public synchronized static void write_encrypt(String path, String file, List<String> keys, List<Object> values, UpdateMode mode, String encryptionKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized void write_encrypt(List<String> keys, List<Object> values, UpdateMode mode, String encryptionKey) {
+
         String title = "writeAndEncrypt";
         FileUtils.checkJSONArgsLength(keys, values, title);
 
         try {
-            File directory = new File(path);
+            File directory = new File(PATH);
             if (!directory.exists() && !directory.mkdirs()) {
-                LOG.info("|{}| Failed to create directory: {}", title, directory.getAbsolutePath());
+                BP.fancyFileLog(className, "write_encrypt", "Failed to create directory", directory.getAbsolutePath());
                 return;
             }
 
-            String fullPath = path + file + ".json";
+            String fullPath = PATH + FILE + ".json";
             File outputFile = new File(fullPath);
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SERIALIZATION_OUTPUT_INDENT);
 
             if (mode == UpdateMode.NOTHING && outputFile.exists()) {
-                LOG.info("|{}| File already exists, skipping due to NOTHING mode: {}", title, fullPath);
+
+                BP.fancyFileLog(className, "write_encrypt", "File already exists, skipping due to NOTHING mode", fullPath);
                 return;
             }
 
@@ -851,7 +865,7 @@ public class EasyJSON {
                     String decryptedContent = xorEncryptAndDecrypt(encryptedContent, encryptionKey);
                     currentData = mapper.readValue(decryptedContent, new TypeReference<>() {});
                 } catch (IOException e) {
-                    LOG.warn("|{}| Could not read existing JSON: {}", title, e.getMessage());
+                    BP.fancyLog(className, "write_encrypt", "Could not read existing JSON", e.getMessage());
                 }
             }
 
@@ -894,22 +908,20 @@ public class EasyJSON {
             }
 
             if (!changesDetected) {
-                LOG.info("|{}| No changes detected, skipping write.", title);
+                BP.fancyFileLog(className, "write_encrypt", "No changes detected, skipping write", directory.getAbsolutePath());
                 return;
             }
 
             String jsonString = mapper.writeValueAsString(currentData);
             String encryptedJson = xorEncryptAndDecrypt(jsonString, encryptionKey);
             Files.write(outputFile.toPath(), encryptedJson.getBytes());
-            LOG.info("|{}| Successfully wrote encrypted JSON file: {}", title, fullPath);
+            BP.fancyFileLog(className, "write_encrypt", "Successfully wrote JSON encrypted file", directory.getAbsolutePath());
         } catch (IOException e) {
-            LOG.warn("|{}| Failed to write JSON: {}", title, e.getMessage());
+            BP.fancyLog(className, "write_encrypt", "Failed to write encrypted JSON", e.getMessage());
         }
     }
 
     /**
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys for the file in list. "key":"value"
      * @param values All the values of the file in list. "key":"value"
      * @param mode <pre>{@code
@@ -927,25 +939,24 @@ public class EasyJSON {
      *
      * @exception IllegalArgumentException If lists doesn't have the same length
      */
-    public synchronized static void write_encrypt(String path, String file, List<String> keys, List<Object> values, UpdateMode mode, List<String> ignoredKeys, String encryptionKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized void write_encrypt(List<String> keys, List<Object> values, UpdateMode mode, List<String> ignoredKeys, String encryptionKey) {
         String title = "write-encrypt";
         FileUtils.checkJSONArgsLength(keys, values, title);
 
         try {
-            File directory = new File(path);
+            File directory = new File(PATH);
             if (!directory.exists() && !directory.mkdirs()) {
-                LOG.info("{} Failed to create directory: {}", title, directory.getAbsolutePath());
+                BP.fancyFileLog(className, "write_encrypt", "Failed to create directory", directory.getAbsolutePath());
                 return;
             }
 
-            String fullPath = path + file + ".json";
+            String fullPath = PATH + FILE + ".json";
             File outputFile = new File(fullPath);
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SERIALIZATION_OUTPUT_INDENT);
 
             if (mode == UpdateMode.NOTHING && outputFile.exists()) {
-                LOG.info("{} File already exists, skipping due to NOTHING mode: {}", title, fullPath);
+                BP.fancyFileLog(className, "write_encrypt", "File already exists, skipping due to NOTHING mode", fullPath);
                 return;
             }
 
@@ -957,7 +968,7 @@ public class EasyJSON {
                     String decryptedContent = xorEncryptAndDecrypt(encryptedContent, encryptionKey);
                     currentData = mapper.readValue(decryptedContent, new TypeReference<>() {});
                 } catch (IOException e) {
-                    LOG.warn("{} Could not read existing JSON: {}", title, e.getMessage());
+                    BP.fancyLog(className, "write_encrypt", "Could not read existing JSON", e.getMessage());
                 }
             }
 
@@ -1003,16 +1014,16 @@ public class EasyJSON {
             }
 
             if (!changesDetected) {
-                LOG.info("{} No changes detected, skipping write.", title);
+                BP.fancyFileLog(className, "write_encrypt", "No changes detected, skipping write", fullPath);
                 return;
             }
 
             String jsonString = mapper.writeValueAsString(currentData);
             String encryptedJson = xorEncryptAndDecrypt(jsonString, encryptionKey);
             Files.write(outputFile.toPath(), encryptedJson.getBytes());
-            LOG.info("{} Successfully wrote encrypted JSON file: {}", title, fullPath);
+            BP.fancyFileLog(className, "write_encrypt", "Successfully wrote JSON encrypted file", directory.getAbsolutePath());
         } catch (IOException e) {
-            LOG.warn("{} Failed to write JSON: {}", title, e.getMessage());
+            BP.fancyLog(className, "write_encrypt", "Failed to write encrypted JSON", e.getMessage());
         }
     }
 
@@ -1020,15 +1031,12 @@ public class EasyJSON {
     /**
      * Reads the content of the encrypted file
      *
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param key All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static @Nullable Object read(String path, String file, @NotNull String key, String encryptKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized @Nullable Object read(@NotNull String key, String encryptKey) {
         try {
-            String filePath = path + file + ".json";
+            String filePath = PATH + FILE + ".json";
 
             String encryptedContent = Files.readString(Paths.get(filePath));
 
@@ -1042,33 +1050,29 @@ public class EasyJSON {
                 if (current instanceof JSONObject jsonObj) {
                     current = jsonObj.get(k);
                 } else {
-                    LOG.warn("|read-Encrypted| Key '{}' is not a valid JSON object", k);
+                    BP.fancyFileLog(className, "read", "Key " + k + " is not a valid JSON object");
                     return null;
                 }
                 if (current == null) {
-                    LOG.warn("|read-Encrypted| Not found key: {}", k);
+                    BP.fancyFileLog(className, "read", "Not found key " + k);
                     return null;
                 }
             }
             return current;
         } catch (IOException | ParseException e) {
-            LOG.warn("|read-Encrypted| Failed to read encrypted JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "read", "Failed to read encrypted JSON file", e.getMessage());
         }
         return null;
     }
 
     /**
      * Reads the content of the encrypted file
-     *
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param key All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static @Nullable Object readObject(String path, String file, String key,@NotNull String encryptKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized @Nullable Object readObject(String key,@NotNull String encryptKey) {
         try {
-            String encryptedContent = Files.readString(Paths.get(path + file + ".json"));
+            String encryptedContent = Files.readString(Paths.get(PATH + FILE + ".json"));
 
             String decryptedContent = xorEncryptAndDecrypt(encryptedContent, encryptKey);
 
@@ -1078,13 +1082,13 @@ public class EasyJSON {
             Object value = reference.get(key);
 
             if (value == null) {
-                LOG.info("|readObject-Encrypted| Encrypted key not found: {}", key);
+                BP.fancyFileLog(className, "readObject", "Encrypted key not found: " + key);
                 return null;
             }
             return value;
 
         } catch (IOException | ParseException e) {
-            LOG.info("|readObject-Encrypted| Failed to read encrypted JSON file: {}", e.getMessage());
+            BP.fancyFileLog(className, "readObject", "Failed to read encrypted JSON file: " + e.getMessage());
         }
         return null;
     }
@@ -1092,16 +1096,14 @@ public class EasyJSON {
 
     /**
      * This method returns a String, if it isn't a String, it will return "No key string found"
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static String readString(String path, String file, String keys,String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized String readString(String keys,String encryptKey){
+        Object result = read(keys, encryptKey);
 
         return switch (result) {
-            case null -> "|readString-Encrypted|No key string found";
+            case null -> "|readString-Encrypted|";
 
             case String s -> s;
 
@@ -1113,13 +1115,11 @@ public class EasyJSON {
 
     /**
      * This method returns a Byte, if it isn't a Byte, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static byte readByte(String path, String file, String keys, String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized byte readByte(String keys, String encryptKey){
+        Object result = read(keys, encryptKey);
         if (result instanceof Integer) {
             return ((Integer) result).byteValue();
         }else if (result instanceof Number) {
@@ -1130,13 +1130,11 @@ public class EasyJSON {
 
     /**
      * This method returns a Short, if it isn't a Short, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static short readShort(String path, String file, String keys, String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized short readShort(String keys, String encryptKey){
+        Object result = read(keys, encryptKey);
         if (result instanceof Integer) {
             return ((Integer) result).shortValue();
         }else if (result instanceof Number) {
@@ -1147,13 +1145,11 @@ public class EasyJSON {
 
     /**
      * This method returns an Integer, if it isn't an Integer, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static int readInt(String path, String file, String keys, String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized int readInt(String keys, String encryptKey){
+        Object result = read(keys, encryptKey);
         if (result instanceof Integer) {
             return (Integer) result;
         }else if (result instanceof Number) {
@@ -1164,13 +1160,11 @@ public class EasyJSON {
 
     /**
      * This method returns a Float, if it isn't a Float, it will return 0
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.
      */
-    public synchronized static float readFloat(String path, String file, String keys, String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized float readFloat(String keys, String encryptKey){
+        Object result = read(keys, encryptKey);
         if (result instanceof Integer) {
             return ((Integer) result).floatValue();
         }else if (result instanceof Number) {
@@ -1181,16 +1175,14 @@ public class EasyJSON {
 
     /**
      * This method returns a Boolean, if it isn't a Boolean, it will return false
-     * @param path Path to the file.
-     * @param file The actual file name.
      * @param keys All the keys that will be read in list. "key":"value"
      */
-    public synchronized static boolean readBoolean(String path, String file, String keys, String encryptKey){
-        Object result = read(path, file, keys, encryptKey);
+    public synchronized boolean readBoolean(String keys, String encryptKey){
+        Object result = read(keys, encryptKey);
         if(result != null){
             return (boolean) result;
         } else {
-            LOG.info("Boolean value from encrypted readBoolean is null!");
+            BP.fancyLog(className, "readBoolean", "Boolean value from encrypted readBoolean is null!");
             return false;
         }
     }
@@ -1199,8 +1191,6 @@ public class EasyJSON {
      * Replaces values in an existing JSON file while keeping the order of keys.
      * If the file does not exist, a new one will be created.
      *
-     * @param path   Path to the file.
-     * @param file   The actual file name (without extension).
      * @param keys   List of keys to be replaced in the JSON file.
      * @param values List of values to be replaced in the JSON file.
      * @param encryptKey The encryption key used to decrypt and re-encrypt the JSON file.<p>
@@ -1208,15 +1198,14 @@ public class EasyJSON {
      * Example: <pre>{@code key : "sound.id.namespace", "sound.id.path"
      * value: "minecraft", "entity.blaze.death"}</pre>
      */
-    public synchronized static void replace(String path, String file, List<String> keys, List<Object> values, String encryptKey) {
-        path = FileUtils.fixPath(path);
+    public synchronized void replace(List<String> keys, List<Object> values, String encryptKey) {
         FileUtils.checkJSONArgsLength(keys, values, "replace");
         try {
-            File directory = new File(path);
-            File jsonFile = new File(directory, file + ".json");
+            File directory = new File(PATH);
+            File jsonFile = new File(directory, FILE + ".json");
 
             if (!jsonFile.exists()) {
-                LOG.info("|replace| JSON file {} does not exist. No action taken.", jsonFile.getAbsolutePath());
+                BP.fancyLog(className, "replace", "JSON file does not exist. No action taken.", jsonFile.getAbsolutePath());
                 return;
             }
 
@@ -1238,9 +1227,10 @@ public class EasyJSON {
 
             Files.writeString(jsonFile.toPath(), encryptedJson);
 
-            LOG.info("|replace| Successfully updated and encrypted JSON file: {}", jsonFile.getAbsolutePath());
+            BP.fancyLog(className, "replace", "Successfully updated and encrypted JSON file", jsonFile.getAbsolutePath());
+
         } catch (IOException e) {
-            LOG.info("|replace| Failed to write encrypted JSON file: {}", e.getMessage());
+            BP.fancyLog(className, "replace", "Failed to write encrypted JSON file", e.getMessage());
         }
     }
 }

@@ -1,12 +1,13 @@
 package baspig.apis.utils.events.block;
 
+import baspig.apis.utils.ModID;
+import baspig.apis.utils.events.entity.EntityEvents;
 import baspig.apis.utils.events.item.ItemEvents;
-import baspig.apis.utils.register.tags.ExtraItemTags;
-import baspig.apis.utils.util.ParticleVelocityType;
-import baspig.apis.utils.util.ShapeType;
+import baspig.apis.utils.util.*;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.tag.TagKey;
@@ -17,9 +18,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**This class gives you some easy config block events
  * @author Baspig_
@@ -28,7 +27,6 @@ import java.util.Random;
 public class BlockEvents {
     static Random random = new Random();
 
-
     /**
      * Spawns a number of particles at random positions outside the block position.
      *
@@ -36,13 +34,12 @@ public class BlockEvents {
      * @param particle The particle effect to spawn.
      * @param pos The block position inside which the particles will be spawned.
      * @param count The number of particles per tick to spawn.
-     * @param spread The area around the block where particles will be added
+     * @param spread The area around the block where particles will be added.
      */
     public static void spawnParticles(@NotNull World world, ParticleEffect particle, BlockPos pos, int count, double spread) {
         net.minecraft.util.math.random.Random random = world.getRandom();
 
         for (int i = 0; i < count; i++) {
-
             Direction face = Direction.values()[random.nextInt(6)];
 
             double x = pos.getX() + 0.5 + face.getOffsetX() * 0.51 + (face.getOffsetX() == 0 ? (random.nextDouble() - 0.5) * spread : 0);
@@ -61,7 +58,7 @@ public class BlockEvents {
      * @param particle The particle effect to spawn.
      * @param pos The block position inside which the particles will be spawned.
      * @param count The number of particles per tick to spawn.
-     * @param spread The area around the block where particles will be added
+     * @param spread The area around the block where particles will be added.
      * @param velocityType Type of particle velocity.
      * @param velocityX Initial particle X velocity, it may be affected by particle behavior.
      * @param velocityY Initial particle Y velocity, it may be affected by particle behavior.
@@ -626,13 +623,111 @@ public class BlockEvents {
         };
     }
 
+    private final String modId;
+    public BlockEvents(String modId){
+        this.modId = modId;
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param entityType Is the entity to spawn.
+     * @param toolTag The tool tag that the item player holds is tagged
+     */
+    public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, 100, 1));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break
+     * @param entityType Is the entity to spawn.
+     * @param toolTag The tool tag that the item player holds is tagged
+     * @param rate Chance to drop the item
+     */
+    public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag, float rate){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, rate, 1));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, 100, false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     * @param rate Chance to drop the item.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, rate, false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     * @param rate Chance to drop the item.
+     * @param spreadFire Sets if the explosion must spread fire around.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate, boolean spreadFire){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, rate, spreadFire));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break
+     * @param entityType Is the entity to spawn.
+     * @param toolTag The tool tag that the item player holds is tagged
+     * @param rate Chance to drop the item
+     * @param amount How many items the block will drop
+     */
+    public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag, float rate, int amount){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, rate, amount));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
     /**
      * @param block Is a block that will drop an in item on break
      * @param item Is an item that the block will drop on break
      * */
-    public static void dropItemOnBlockBreak(@NotNull Block block,@NotNull Item item, TagKey<Item> toolTag){
+    public void dropItemOnBreak(@NotNull Block block,@NotNull Item item, TagKey<Item> toolTag){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
 
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, 100, 1, false, 1,false));
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, 100, 1, false, 1,false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
     }
 
     /**
@@ -640,8 +735,12 @@ public class BlockEvents {
      * @param item Is an item that the block will drop on break
      * @param rate Chance to drop the item
      */
-    public static void dropItemOnBlockBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, 1, false, 1,false));
+    public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, 1, false, 1,false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
     }
 
     /**
@@ -650,9 +749,12 @@ public class BlockEvents {
      * @param rate Chance to drop the item
      * @param amount How many items the block will dropv
      */
-    public static void dropItemOnBlockBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
+    public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
 
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, false, amount,false));
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, false, 1,false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
     }
 
     /**
@@ -662,58 +764,15 @@ public class BlockEvents {
      * @param amount How many items the block will drop
      * @param randomDrops make the block drop a random amount
      */
-    public static void dropItemOnBlockBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
+    public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
 
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, randomDrops, amount,false));
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, 1,false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
     }
 
     /**
-     * @param block Is a block that will drop an in item on break
-     * @param item Is an item that the block will drop on break
-     * @param rate Chance to drop the item
-     * @param amount How many items the block will drop
-     * @param randomDrops make the block drop a random amount
-     * @param minDrop Minimum amount of items that will be dropped
-     */
-    public static void dropItemOnBlockBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, randomDrops, minDrop,false));
-    }
-
-    /**
-     * @param dropsInCreative The item can be dropped in creative mode?
-     * @param block Is a block that will drop an in item on break
-     * @param item Is an item that the block will drop on break
-     * @param rate Chance to drop the item
-     */
-    private static void dropItemOnBlockBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag,  float rate){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, 1, false, 1,false));
-    }
-
-    /**
-     * @param dropsInCreative The item can be dropped in creative mode?
-     * @param block Is a block that will drop an in item on break
-     * @param item Is an item that the block will drop on break
-     * @param rate Chance to drop the item
-     * @param amount How many items the block will drop
-     */
-    private static void dropItemOnBlockBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, false, 1,false));
-    }
-
-    /**
-     * @param dropsInCreative The item can be dropped in creative mode?
-     * @param block Is a block that will drop an in item on break
-     * @param item Is an item that the block will drop on break
-     * @param rate Chance to drop the item
-     * @param amount How many items the block will drop
-     * @param randomDrops make the block drop a random amount
-     */
-    private static void dropItemOnBlockBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, randomDrops, 1,false));
-    }
-
-    /**
-     * @param dropsInCreative The item can be dropped in creative mode?
      * @param block Is a block that will drop an in item on break
      * @param item Is an item that the block will drop on break
      * @param rate Chance to drop the item
@@ -721,8 +780,74 @@ public class BlockEvents {
      * @param randomDrops make the block drop a random amount
      * @param minDrop Minimum amount of items that will be dropped
      */
-    private static void dropItemOnBlockBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
-        blockDropSettings.put(block, new AdvancedDropSettings(item, toolTag, rate, amount, randomDrops, minDrop,false));
+    public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, minDrop,false));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param dropsInCreative The item can be dropped in creative mode?
+     * @param block Is a block that will drop an in item on break
+     * @param item Is an item that the block will drop on break
+     * @param rate Chance to drop the item
+     */
+    public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag,  float rate){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, 100, 1, false, 1,dropsInCreative));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param dropsInCreative The item can be dropped in creative mode?
+     * @param block Is a block that will drop an in item on break
+     * @param item Is an item that the block will drop on break
+     * @param rate Chance to drop the item
+     * @param amount How many items the block will drop
+     */
+    public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, false, 1,dropsInCreative));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param dropsInCreative The item can be dropped in creative mode?
+     * @param block Is a block that will drop an in item on break
+     * @param item Is an item that the block will drop on break
+     * @param rate Chance to drop the item
+     * @param amount How many items the block will drop
+     * @param randomDrops make the block drop a random amount
+     */
+    public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, 1,dropsInCreative));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param dropsInCreative The item can be dropped in creative mode?
+     * @param block Is a block that will drop an in item on break
+     * @param item Is an item that the block will drop on break
+     * @param rate Chance to drop the item
+     * @param amount How many items the block will drop
+     * @param randomDrops make the block drop a random amount
+     * @param minDrop Minimum amount of items that will be dropped
+     */
+    public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, minDrop,dropsInCreative));
+
+        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
     }
 
 
@@ -830,58 +955,85 @@ public class BlockEvents {
         world.createExplosion(null, x + 0.5f, y + 0.4f, z + 0.5f, explosionPower, true, sourceType);
     }
 
-    /// ----------------------------------------------------------------------------------------------------------------
-    private static final Map<Block, AdvancedDropSettings> blockDropSettings = new HashMap<>();
 
-    /**
+    /**----------------------------------------------------------------------------------------------------------------
      * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHER TO MALFUNCTION!!
+     * <p>
+     * This class if for internal use only
      */
-    public static void DestroyEvent() {
+    public static void BlockEventRegister(ModID id) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        if (stackTrace.length > 2) {
+            String clasWhoCallThis = stackTrace[2].getClassName();
+            if(!clasWhoCallThis.equals("baspig.apis.utils.Baspig_utils") && !Objects.equals(id.toString(), "baspig_utils")){
+
+                String r = ConsoleColors.RESET;
+                String red = ConsoleColors.RED;
+                String yellow = ConsoleColors.YELLOW;
+                String lightBlue = ConsoleColors.BLUE_BRIGHT;
+
+                BP.fancyLog(   "BaspigUtils.BlockEvents."+yellow+"class"+r, lightBlue+"BlockEventRegister"+r,
+                        "        If you see this message "+yellow+"twice"+r+", it is a " +red+ "problem" +r+
+                                   "\n        Other/s mod are calling it. \n It's being called by method: " +yellow+ clasWhoCallThis);
+            }
+        }
+
+
+
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-            Block block = blockState.getBlock();
 
-            if (blockDropSettings.containsKey(block)) {
-                AdvancedDropSettings settings = blockDropSettings.get(block);
-                if (random.nextFloat() * 100 < settings.rate) {
+            if(BlockSettingClasses.GeneralSettingsMap.isEmpty()) return; //Stops the method if not content is found, or it's null.
 
-                    if(playerEntity.getMainHandStack().isIn(settings.toolTag) || settings.toolTag == ExtraItemTags.NO_TOOL_LEVEL){
-                        int extra = (settings.quantity > settings.minDrop) ? random.nextInt(settings.quantity - settings.minDrop) : 0;
-                        int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
+            Block block = blockState.getBlock(); // Sets the comparator Block
 
-                        if(playerEntity instanceof ServerPlayerEntity && settings.dropsOnCreative && (playerEntity).isCreative()){
-                            for (int i = 0; i < dropAmount; i++) {
-                                ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
-                            }
+            /// This manages all Maps of setting classes
+            /// Creating an instance-like executer
+            for(String modIdKeys : BlockSettingClasses.GeneralSettingsMap.keySet()){
+                Map<Block, Object> innerMap = BlockSettingClasses.GeneralSettingsMap.get(modIdKeys);
+
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Selected Explode type:
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.Explode settings){
+                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                                && GeneralUtils.probability(settings.rate)
+                                && world instanceof ServerWorld serverWorld){
+                            BlockEvents.explode(serverWorld, blockPos, settings.power, settings.fireSpread);
                         }
-                        if(playerEntity instanceof ServerPlayerEntity && !settings.dropsOnCreative && !(playerEntity).isCreative()){
-                            for (int i = 0; i < dropAmount; i++) {
-                                ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
+                    }
+                    /// Selected Spawn Entity type:
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.SpawnEntity settings){
+                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                                && GeneralUtils.probability(settings.rate)
+                                && world instanceof ServerWorld serverWorld){
+                            EntityEvents.generate(serverWorld, blockPos, settings.entityType);
+                        }
+                    }
+                    /// Selected Drop Item type:
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.DropSettings settings){
+                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                                && GeneralUtils.probability(settings.rate)
+                                && world instanceof ServerWorld serverWorld){
+                            if(GeneralUtils.probability(settings.rate)){
+                                int extra = (settings.quantity > settings.minDrop) ? random.nextInt(settings.quantity - settings.minDrop) : 0;
+                                int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
+
+                                if(playerEntity instanceof ServerPlayerEntity && settings.dropsOnCreative && (playerEntity).isCreative()){
+                                    for (int i = 0; i < dropAmount; i++) {
+                                        ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
+                                    }
+                                }
+                                if(playerEntity instanceof ServerPlayerEntity && !settings.dropsOnCreative && !(playerEntity).isCreative()){
+                                    for (int i = 0; i < dropAmount; i++) {
+                                        ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         });
-    }
-
-    private static class AdvancedDropSettings {
-        Item item;
-        TagKey<Item> toolTag;
-        float rate;
-        int quantity;
-        boolean randomDrops;
-        int minDrop;
-        boolean dropsOnCreative;
-
-        AdvancedDropSettings(Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop, boolean dropsOnCreative) {
-            this.item = item;
-            this.toolTag = toolTag;
-            this.rate = rate;
-            this.quantity = amount;
-            this.randomDrops = randomDrops;
-            this.minDrop = minDrop;
-            this.dropsOnCreative = dropsOnCreative;
-        }
     }
     /// ----------------------------------------------------------------------------------------------------------------
 }

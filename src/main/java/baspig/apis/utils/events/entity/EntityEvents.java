@@ -1,6 +1,9 @@
 package baspig.apis.utils.events.entity;
 
+import baspig.apis.utils.ModID;
 import baspig.apis.utils.events.item.ItemEvents;
+import baspig.apis.utils.util.BP;
+import baspig.apis.utils.util.ConsoleColors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.*;
 import net.minecraft.item.Item;
@@ -8,9 +11,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * @author Baspig_
@@ -230,11 +231,24 @@ public class EntityEvents {
         }
     }
 
-
     /**
      * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHERS TO MALFUNCTION!!
      */
-    public static void BlockEventsRegistry(){
+    public static void EntityEventsRegistry(ModID id){
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        if (stackTrace.length > 2) {
+            String clasWhoCallThis = stackTrace[2].getClassName();
+            if(!clasWhoCallThis.equals("baspig.apis.utils.Baspig_utils") && !Objects.equals(id.toString(), "baspig_utils")){
+                String r = ConsoleColors.RESET;
+                String red = ConsoleColors.RED;
+                String yellow = ConsoleColors.YELLOW;
+                String lightBlue = ConsoleColors.BLUE_BRIGHT;
+
+                BP.fancyLog(   "BaspigUtils.EntityEvents."+yellow+"class"+r, lightBlue+"EntityEventsRegistry"+r,
+                        "        If you see this message "+yellow+"twice"+r+", it is a " +red+ "problem" +r+
+                                "\n        Other/s mod are calling it. \n It's being called by method: " +yellow+ clasWhoCallThis);
+            }
+        }
         KillEvent();
         KillAndSpawnEvent();
     }

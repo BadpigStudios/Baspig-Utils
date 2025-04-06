@@ -59,4 +59,17 @@ public class FileUtils {
             throw new IllegalArgumentException("|" + logTitle + "| Keys and values lists must have the same length");
         }
     }
+
+    /**
+     * This checks if the List contains that index location. <p>
+     * Ensuring the available of the index into the List to don't throw an {@link IndexOutOfBoundsException}
+     *
+     * @param list The List to check.
+     * @param index The index number to check.
+     * @return True if index is into the bound of the List, false if not.
+     */
+    public static boolean indexCheck(List<?> list, int index){
+        /// Return true if the index location is more than zero, and less or equals to the List size.
+        return list.size() >= index && index > 0;
+    }
 }

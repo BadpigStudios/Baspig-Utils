@@ -63,7 +63,7 @@ public class GuiTexture {
         int height = client.getWindow().getScaledHeight();
 
         context.drawTexture((id) -> RenderLayer.getGuiTextured(texture),
-                texture, x, y, 1,1, width, height, width + 1,height + 1 );
+                texture, x, y, 1,1, width, height, width + 1,height + 1);
     }
 
     /**This method renderers a background texture in the main menu
