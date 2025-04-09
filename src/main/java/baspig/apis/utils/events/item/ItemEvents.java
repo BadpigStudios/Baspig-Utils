@@ -12,11 +12,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Random;
+
 /**
  * @author Baspig_
  */
 @SuppressWarnings("unused")
 public class ItemEvents {
+    private static final Random random = new Random();
 
     public static boolean playerHasInHand(PlayerEntity playerEntity, TagKey<Item> toolTag){
         return playerEntity.getMainHandStack().isIn(toolTag) || toolTag == ExtraItemTags.NO_TOOL_LEVEL;
@@ -69,5 +72,8 @@ public class ItemEvents {
                 player.setStackInHand(hand, stack);
             }
         }
+    }
+
+    private static void RegisterItemEvents(){
     }
 }

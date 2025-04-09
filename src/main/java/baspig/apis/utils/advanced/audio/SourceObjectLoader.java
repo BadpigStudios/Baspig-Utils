@@ -21,14 +21,12 @@ public class SourceObjectLoader {
     protected static void initiate(){
         ServerTickEvents.START_WORLD_TICK.register(world -> {
 
-
             for (Map.Entry<BlockPos, SourceObjectData> entry : sourceObjects.entrySet()) {
                 BlockPos pos = entry.getKey();
                 SourceObjectData data = entry.getValue();
 
                 if (DimensionData.checkIf(data.getDimension(), world) && world.isPosLoaded(pos)) {
                     if (data.getSoundEvent() != null) {
-
                         if(data.getCurrentTick() > data.getMaxTicks()){
 
                             world.playSound(null, data.getPosition(), data.getSoundEvent(), data.getSoundCategory(), 1, 1);
@@ -49,7 +47,6 @@ public class SourceObjectLoader {
         sourceObjects.put(position, new SourceObjectData(dimension, position,
                 soundEvents, category, maxTicks, initialized));
     }
-
 
     protected static class SourceObjectData {
 
