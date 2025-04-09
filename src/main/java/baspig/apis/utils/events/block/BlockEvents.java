@@ -8,14 +8,18 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -24,6 +28,7 @@ import java.util.*;
  * @author Baspig_
  */
 @SuppressWarnings("unused")
+@ApiStatus.NonExtendable
 public class BlockEvents {
     static Random random = new Random();
 
@@ -523,7 +528,6 @@ public class BlockEvents {
         }
     }
 
-
         /**
          * Checks if the block in any direction isn't the specified block.
          * <p>
@@ -550,7 +554,6 @@ public class BlockEvents {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -574,7 +577,6 @@ public class BlockEvents {
         };
     }
 
-
     /**
      * Checks if the specified block exists in any of the six adjacent positions <p>
      * (up, down, north, south, east, west) relative to the given position in the world.
@@ -584,7 +586,7 @@ public class BlockEvents {
      * @param block the block to check for in the adjacent positions
      * @return true if the specified block is found in one of the adjacent positions; false otherwise
      */
-    public static boolean nextBlockIs(World world, BlockPos pos, Block block){
+    public static boolean nextBlockIs(World world, @NotNull BlockPos pos, Block block){
         BlockPos[] directions = {
                 pos.up(),
                 pos.down(),
@@ -601,7 +603,6 @@ public class BlockEvents {
         }
         return false;
     }
-
 
     /**
      * Checks if the block in the specified direction from the given position is the specified block.
@@ -623,9 +624,106 @@ public class BlockEvents {
         };
     }
 
-    private final String modId;
-    public BlockEvents(String modId){
-        this.modId = modId;
+
+    private final String modId; //The mod id into a final String
+
+    /**
+     * Setups the instances for all Map required events.
+     *
+     * @param modId The mod id of the mod that uses the vents and creates the instance.
+     */
+    public BlockEvents(String modId, String referenceId){
+        /// Creation of a secure events creation to avoid overwrite other mods events.
+        this.modId = modId + ":" + referenceId;
+    }
+
+    public enum Mode{
+        AdIfAbsent,
+        Replace
+    }
+
+    public enum RemoveEvent{
+        AddEntityOnBreak,
+        DropItemOnBreak,
+        ExplodeOnBreak,
+        PlaySoundOnBreak
+    }
+
+    /**
+     * This deletes any event of the given Mod ID.
+     *
+     * @param block The block related to the event to delete
+     */
+    public void deleteEvent(Block block, RemoveEvent removeEvent){
+        for(String modIdKeys : BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.keySet()){
+            Map<Block, Object> innerMap = BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && removeEvent.equals(RemoveEvent.AddEntityOnBreak)
+                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(block);
+                        return;
+                    }
+                }
+            }
+        }
+        for(String modIdKeys : BlockSettingClasses.GeneralDropItemOnBreakMap.keySet()){
+            Map<Block, Object> innerMap = BlockSettingClasses.GeneralDropItemOnBreakMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && removeEvent.equals(RemoveEvent.DropItemOnBreak)
+                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(block);
+                        return;
+                    }
+                }
+            }
+        }
+
+        for(String modIdKeys : BlockSettingClasses.GeneralExplodeOnBreakHashMap.keySet()){
+            Map<Block, Object> innerMap = BlockSettingClasses.GeneralExplodeOnBreakHashMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && removeEvent.equals(RemoveEvent.ExplodeOnBreak)
+                            && entry.getValue() instanceof BlockSettingClasses.ExplodeOnBreakSettings settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(block);
+                        return;
+                    }
+                }
+            }
+        }
+        for(String modIdKeys : BlockSettingClasses.GeneralPlaySoundOnBreakMap.keySet()){
+            Map<Block, Object> innerMap = BlockSettingClasses.GeneralPlaySoundOnBreakMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && removeEvent.equals(RemoveEvent.PlaySoundOnBreak)
+                            && entry.getValue() instanceof BlockSettingClasses.PlaySoundOnBreakSettings settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(block);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -634,12 +732,11 @@ public class BlockEvents {
      * @param toolTag The tool tag that the item player holds is tagged
      */
     public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag){
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityOnBreakHashMap;
 
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        updateMap.put(block, new BlockSettingClasses.AddEntityOnBreakSettings(entityType, toolTag, 100, 1));
 
-        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, 100, 1));
-
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.put(modId, updateMap);
     }
 
     /**
@@ -650,56 +747,11 @@ public class BlockEvents {
      */
     public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag, float rate){
 
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityOnBreakHashMap;
 
-        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, rate, 1));
+        updateMap.put(block, new BlockSettingClasses.AddEntityOnBreakSettings(entityType, toolTag, rate, 1));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
-    }
-
-    /**
-     * @param block Is a block that will drop an in item on break.
-     * @param power is the power of the explosion.
-     * @param toolTag The tool tag that the item player holds is tagged.
-     */
-    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag){
-
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
-
-        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, 100, false));
-
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
-    }
-
-    /**
-     * @param block Is a block that will drop an in item on break.
-     * @param power is the power of the explosion.
-     * @param toolTag The tool tag that the item player holds is tagged.
-     * @param rate Chance to drop the item.
-     */
-    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate){
-
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
-
-        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, rate, false));
-
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
-    }
-
-    /**
-     * @param block Is a block that will drop an in item on break.
-     * @param power is the power of the explosion.
-     * @param toolTag The tool tag that the item player holds is tagged.
-     * @param rate Chance to drop the item.
-     * @param spreadFire Sets if the explosion must spread fire around.
-     */
-    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate, boolean spreadFire){
-
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
-
-        updateMap.put(block, new BlockSettingClasses.Explode(power, toolTag, rate, spreadFire));
-
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.put(modId, updateMap);
     }
 
     /**
@@ -711,11 +763,56 @@ public class BlockEvents {
      */
     public void addEntityOnBreak(@NotNull Block block, @NotNull EntityType<?> entityType, TagKey<Item> toolTag, float rate, int amount){
 
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityOnBreakHashMap;
 
-        updateMap.put(block, new BlockSettingClasses.SpawnEntity(entityType, toolTag, rate, amount));
+        updateMap.put(block, new BlockSettingClasses.AddEntityOnBreakSettings(entityType, toolTag, rate, amount));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.ExplodeOnBreakHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.ExplodeOnBreakSettings(power, toolTag, 100, false));
+
+        BlockSettingClasses.GeneralExplodeOnBreakHashMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     * @param rate Chance to drop the item.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.ExplodeOnBreakHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.ExplodeOnBreakSettings(power, toolTag, rate, false));
+
+        BlockSettingClasses.GeneralExplodeOnBreakHashMap.put(modId, updateMap);
+    }
+
+    /**
+     * @param block Is a block that will drop an in item on break.
+     * @param power is the power of the explosion.
+     * @param toolTag The tool tag that the item player holds is tagged.
+     * @param rate Chance to drop the item.
+     * @param spreadFire Sets if the explosion must spread fire around.
+     */
+    public void explodeOnBreak(@NotNull Block block, float power, TagKey<Item> toolTag, float rate, boolean spreadFire){
+
+        Map<Block, Object> updateMap = BlockSettingClasses.ExplodeOnBreakHashMap;
+
+        updateMap.put(block, new BlockSettingClasses.ExplodeOnBreakSettings(power, toolTag, rate, spreadFire));
+
+        BlockSettingClasses.GeneralExplodeOnBreakHashMap.put(modId, updateMap);
     }
 
     /**
@@ -723,11 +820,11 @@ public class BlockEvents {
      * @param item Is an item that the block will drop on break
      * */
     public void dropItemOnBreak(@NotNull Block block,@NotNull Item item, TagKey<Item> toolTag){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, 100, 1, false, 1,false));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, 100, 1, false, 1,false));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -736,11 +833,11 @@ public class BlockEvents {
      * @param rate Chance to drop the item
      */
     public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, 1, false, 1,false));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, 1, false, 1,false));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -750,11 +847,11 @@ public class BlockEvents {
      * @param amount How many items the block will dropv
      */
     public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, false, 1,false));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, false, 1,false));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -765,11 +862,11 @@ public class BlockEvents {
      * @param randomDrops make the block drop a random amount
      */
     public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, 1,false));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, randomDrops, 1,false));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -781,11 +878,11 @@ public class BlockEvents {
      * @param minDrop Minimum amount of items that will be dropped
      */
     public void dropItemOnBreak(@NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, minDrop,false));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, randomDrops, minDrop,false));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -795,11 +892,11 @@ public class BlockEvents {
      * @param rate Chance to drop the item
      */
     public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag,  float rate){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, 100, 1, false, 1,dropsInCreative));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, 100, 1, false, 1,dropsInCreative));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -810,11 +907,11 @@ public class BlockEvents {
      * @param amount How many items the block will drop
      */
     public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, false, 1,dropsInCreative));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, false, 1,dropsInCreative));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -826,11 +923,11 @@ public class BlockEvents {
      * @param randomDrops make the block drop a random amount
      */
     public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, 1,dropsInCreative));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, randomDrops, 1,dropsInCreative));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
     }
 
     /**
@@ -843,11 +940,60 @@ public class BlockEvents {
      * @param minDrop Minimum amount of items that will be dropped
      */
     public void dropItemOnBreak(boolean dropsInCreative, @NotNull Block block, @NotNull Item item, TagKey<Item> toolTag, float rate, int amount, boolean randomDrops, int minDrop){
-        Map<Block, Object> updateMap = BlockSettingClasses.SpawnEntityHashMap;
+        Map<Block, Object> updateMap = BlockSettingClasses.DropItemOnBreakMap;
 
-        updateMap.put(block, new BlockSettingClasses.DropSettings(item, toolTag, rate, amount, randomDrops, minDrop,dropsInCreative));
+        updateMap.put(block, new BlockSettingClasses.DropItemObBreakSettings(item, toolTag, rate, amount, randomDrops, minDrop,dropsInCreative));
 
-        BlockSettingClasses.GeneralSettingsMap.put(modId, updateMap);
+        BlockSettingClasses.GeneralDropItemOnBreakMap.put(modId, updateMap);
+    }
+
+    /**
+     * This plays a sound when the player brakes the specified block
+     *
+     * @param block Is the current block to link to the event
+     * @param soundEvent The sound to play when block is broken
+     * @param soundCategory The category of the sound that will play
+     * @param toolTag The tag of the item that the player has in the hand when it broke the block
+     */
+    public void playSoundOnBreak(@NotNull Block block, @NotNull SoundEvent soundEvent, SoundCategory soundCategory, TagKey<Item> toolTag){
+        Map<Block, Object> updateMap = BlockSettingClasses.PlaySoundOnBreakMap;
+
+        updateMap.put(block, new BlockSettingClasses.PlaySoundOnBreakSettings(soundEvent, soundCategory, toolTag, 100, 1f));
+
+        BlockSettingClasses.GeneralPlaySoundOnBreakMap.put(modId, updateMap);
+    }
+    /**
+     * This plays a sound when the player brakes the specified block
+     *
+     * @param block Is the current block to link to the event
+     * @param soundEvent The sound to play when block is broken
+     * @param soundCategory The category of the sound that will play
+     * @param toolTag The tag of the item that the player has in the hand when it broke the block
+     * @param rate The chance of playing the sound
+     */
+    public void playSoundOnBreak(@NotNull Block block, @NotNull SoundEvent soundEvent, SoundCategory soundCategory, TagKey<Item> toolTag, float rate){
+        Map<Block, Object> updateMap = BlockSettingClasses.PlaySoundOnBreakMap;
+
+        updateMap.put(block, new BlockSettingClasses.PlaySoundOnBreakSettings(soundEvent, soundCategory, toolTag, rate, 1f));
+
+        BlockSettingClasses.GeneralPlaySoundOnBreakMap.put(modId, updateMap);
+    }
+    /**
+     * This plays a sound when the player brakes the specified block
+     *
+     * @param block Is the current block to link to the event
+     * @param soundEvent The sound to play when block is broken
+     * @param soundCategory The category of the sound that will play
+     * @param toolTag The tag of the item that the player has in the hand when it broke the block
+     * @param rate The chance of playing the sound
+     * @param volume The volume of the sound
+     */
+    public void playSoundOnBreak(@NotNull Block block, @NotNull SoundEvent soundEvent, SoundCategory soundCategory, TagKey<Item> toolTag, float rate, float volume){
+        Map<Block, Object> updateMap = BlockSettingClasses.PlaySoundOnBreakMap;
+
+        updateMap.put(block, new BlockSettingClasses.PlaySoundOnBreakSettings(soundEvent, soundCategory, toolTag, rate, volume));
+
+        BlockSettingClasses.GeneralPlaySoundOnBreakMap.put(modId, updateMap);
     }
 
 
@@ -955,10 +1101,7 @@ public class BlockEvents {
         world.createExplosion(null, x + 0.5f, y + 0.4f, z + 0.5f, explosionPower, true, sourceType);
     }
 
-
-    /**----------------------------------------------------------------------------------------------------------------
-     * !!DO NOT USE, THIS MAY CAUSE YOUR MOD AND OTHER TO MALFUNCTION!!
-     * <p>
+    /**
      * This class if for internal use only
      */
     public static void BlockEventRegister(ModID id) {
@@ -966,74 +1109,109 @@ public class BlockEvents {
         if (stackTrace.length > 2) {
             String clasWhoCallThis = stackTrace[2].getClassName();
             if(!clasWhoCallThis.equals("baspig.apis.utils.Baspig_utils") && !Objects.equals(id.toString(), "baspig_utils")){
-
                 String r = ConsoleColors.RESET;
                 String red = ConsoleColors.RED;
                 String yellow = ConsoleColors.YELLOW;
                 String lightBlue = ConsoleColors.BLUE_BRIGHT;
 
-                BP.fancyLog(   "BaspigUtils.BlockEvents."+yellow+"class"+r, lightBlue+"BlockEventRegister"+r,
-                        "        If you see this message "+yellow+"twice"+r+", it is a " +red+ "problem" +r+
-                                   "\n        Other/s mod are calling it. \n It's being called by method: " +yellow+ clasWhoCallThis);
+                BP.LOG.warn("Other mod is trying to access and register/modify Easy events. It's being called by class: {}{}", yellow, clasWhoCallThis);
             }
         }
 
-
-
         PlayerBlockBreakEvents.AFTER.register((world, playerEntity, blockPos, blockState, blockEntity) -> {
-
-            if(BlockSettingClasses.GeneralSettingsMap.isEmpty()) return; //Stops the method if not content is found, or it's null.
-
             Block block = blockState.getBlock(); // Sets the comparator Block
+            if (!(world instanceof ServerWorld serverWorld)) return;
 
-            /// This manages all Maps of setting classes
-            /// Creating an instance-like executer
-            for(String modIdKeys : BlockSettingClasses.GeneralSettingsMap.keySet()){
-                Map<Block, Object> innerMap = BlockSettingClasses.GeneralSettingsMap.get(modIdKeys);
+            for(String modIdKeys : BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.keySet()){
+                Map<Block, Object> innerMap = BlockSettingClasses.GeneralSpawnEntityOnBreakHashMap.get(modIdKeys);
 
                 /// Search for each settings type entry
                 for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
-                    /// Selected Explode type:
-                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.Explode settings){
-                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
-                                && GeneralUtils.probability(settings.rate)
-                                && world instanceof ServerWorld serverWorld){
-                            BlockEvents.explode(serverWorld, blockPos, settings.power, settings.fireSpread);
-                        }
+                    /// Process all the data
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.AddEntityOnBreakSettings settings){
+                        //Here is called to make easier future improvements
+                        addEntityOnBreakFunction(settings, playerEntity,serverWorld, blockPos);
                     }
-                    /// Selected Spawn Entity type:
-                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.SpawnEntity settings){
-                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
-                                && GeneralUtils.probability(settings.rate)
-                                && world instanceof ServerWorld serverWorld){
-                            EntityEvents.generate(serverWorld, blockPos, settings.entityType);
-                        }
-                    }
-                    /// Selected Drop Item type:
-                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.DropSettings settings){
-                        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
-                                && GeneralUtils.probability(settings.rate)
-                                && world instanceof ServerWorld serverWorld){
-                            if(GeneralUtils.probability(settings.rate)){
-                                int extra = (settings.quantity > settings.minDrop) ? random.nextInt(settings.quantity - settings.minDrop) : 0;
-                                int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
+                }
+            }
 
-                                if(playerEntity instanceof ServerPlayerEntity && settings.dropsOnCreative && (playerEntity).isCreative()){
-                                    for (int i = 0; i < dropAmount; i++) {
-                                        ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
-                                    }
-                                }
-                                if(playerEntity instanceof ServerPlayerEntity && !settings.dropsOnCreative && !(playerEntity).isCreative()){
-                                    for (int i = 0; i < dropAmount; i++) {
-                                        ItemEvents.createWorldItem(world, blockPos, settings.item.getDefaultStack());
-                                    }
-                                }
-                            }
-                        }
+            for(String modIdKeys : BlockSettingClasses.GeneralDropItemOnBreakMap.keySet()){
+                Map<Block, Object> innerMap = BlockSettingClasses.GeneralDropItemOnBreakMap.get(modIdKeys);
+
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings settings){
+                        dropItemOnBreakFunction(settings, playerEntity, serverWorld, blockPos);
+                    }
+                }
+            }
+
+            for(String modIdKeys : BlockSettingClasses.GeneralExplodeOnBreakHashMap.keySet()){
+                Map<Block, Object> innerMap = BlockSettingClasses.GeneralExplodeOnBreakHashMap.get(modIdKeys);
+
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.ExplodeOnBreakSettings settings){
+                        explodeOnBreakFunction(settings, playerEntity, serverWorld, blockPos);
+                    }
+                }
+            }
+
+            for(String modIdKeys : BlockSettingClasses.GeneralPlaySoundOnBreakMap.keySet()){
+                Map<Block, Object> innerMap = BlockSettingClasses.GeneralPlaySoundOnBreakMap.get(modIdKeys);
+
+                /// Search for each settings type entry
+                for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(block == entry.getKey() && entry.getValue() instanceof BlockSettingClasses.PlaySoundOnBreakSettings settings){
+                        playSoundOnBreakFunction(settings, playerEntity, serverWorld, blockPos);
                     }
                 }
             }
         });
     }
-    /// ----------------------------------------------------------------------------------------------------------------
+
+    ///
+    /// Here start the "easier to edit" code.
+    ///
+
+    private static void dropItemOnBreakFunction(BlockSettingClasses.DropItemObBreakSettings settings, PlayerEntity playerEntity, ServerWorld serverWorld, BlockPos blockPos){
+        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                && GeneralUtils.probability(settings.rate)){
+            int extra = (settings.quantity > settings.minDrop) ? random.nextInt(settings.quantity - settings.minDrop) : 0;
+            int dropAmount = settings.randomDrops ? settings.minDrop + extra : settings.minDrop;
+
+            if (playerEntity instanceof ServerPlayerEntity serverPlayer &&
+                    (settings.dropsOnCreative == serverPlayer.isCreative())) {
+
+                for (int i = 0; i < dropAmount; i++) {
+                    ItemEvents.createWorldItem(serverWorld, blockPos, settings.item.getDefaultStack());
+                }
+            }
+        }
+    }
+
+    private static void addEntityOnBreakFunction(BlockSettingClasses.AddEntityOnBreakSettings settings, PlayerEntity playerEntity, ServerWorld serverWorld, BlockPos blockPos){
+        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                && GeneralUtils.probability(settings.rate)){
+            EntityEvents.generate(serverWorld, blockPos, settings.entityType);
+        }
+    }
+
+    private static void explodeOnBreakFunction(BlockSettingClasses.ExplodeOnBreakSettings settings, PlayerEntity playerEntity, ServerWorld serverWorld, BlockPos blockPos){
+        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                && GeneralUtils.probability(settings.rate)){
+
+            BlockEvents.explode(serverWorld, blockPos, settings.power, settings.fireSpread);
+        }
+    }
+
+    private static void playSoundOnBreakFunction(BlockSettingClasses.PlaySoundOnBreakSettings settings, PlayerEntity playerEntity, ServerWorld serverWorld, BlockPos blockPos){
+        if(ItemEvents.playerHasInHand(playerEntity, settings.toolTag)
+                && GeneralUtils.probability(settings.rate)){
+            serverWorld.playSound(null, blockPos, settings.soundEvent, settings.soundCategory);
+        }
+    }
 }
