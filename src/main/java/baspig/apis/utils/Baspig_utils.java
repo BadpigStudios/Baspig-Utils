@@ -28,5 +28,7 @@ public class Baspig_utils implements ModInitializer {
         BlockEvents.BlockEventRegister(id);
         EntityEvents.RegisterEntityEvents(id);
         new IsRegAudio(id);
+        BaspigsRegistries.reg();
+
     }
 }
