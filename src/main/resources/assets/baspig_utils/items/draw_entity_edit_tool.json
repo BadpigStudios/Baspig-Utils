@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "baspig_utils:items/draw_entity_edit_tool"
+  }
+}

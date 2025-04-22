@@ -2,7 +2,7 @@ package baspig.apis.utils.util;
 
 /**
  * Multi propose return type enum
- * @Author Baspig_
+ * @author Baspig_
  */
 public enum ReturnType {
     Null,

@@ -3,9 +3,11 @@ package baspig.apis.utils.advanced.audio;
 import baspig.apis.utils.ModID;
 import baspig.apis.utils.util.BP;
 import baspig.apis.utils.util.ConsoleColors;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 
+@ApiStatus.NonExtendable
 public class IsRegAudio {
     public IsRegAudio(ModID id){
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

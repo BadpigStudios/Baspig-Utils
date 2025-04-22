@@ -1,7 +1,7 @@
 package baspig.apis.utils.advanced.audio;
 
-import baspig.apis.utils.util.DimensionData;
 import baspig.apis.utils.util.Dimension;
+import baspig.apis.utils.util.DimensionData;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;

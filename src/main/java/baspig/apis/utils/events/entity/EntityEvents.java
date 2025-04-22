@@ -1,26 +1,32 @@
 package baspig.apis.utils.events.entity;
 
 import baspig.apis.utils.ModID;
+import baspig.apis.utils.events.block.BlockEvents;
 import baspig.apis.utils.events.item.ItemEvents;
 import baspig.apis.utils.util.BP;
 import baspig.apis.utils.util.ConsoleColors;
 import baspig.apis.utils.util.GeneralUtils;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.Item;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 
 /**
  * @author Baspig_
  */
 @SuppressWarnings("unused")
 @ApiStatus.NonExtendable
-public class EntityEvents {
+public final class EntityEvents {
     static Random random = new Random();
 
     /**
@@ -48,9 +54,54 @@ public class EntityEvents {
         this.modId = modId + ":" + referenceId;
     }
 
-    public enum Mode{
-        AdIfAbsent,
-        Replace
+    public enum RemoveEvent{
+        AddEntityOnBreak,
+        DropItemOnBreak,
+        ExplodeOnBreak,
+        PlaySoundOnBreak
+    }
+
+    /**
+     * This deletes any event of the given Mod ID.
+     *
+     * @param entity The block related to the event to delete
+     */
+    public void deleteEvent(EntityType<?> entity, BlockEvents.RemoveEvent removeEvent){
+        for(String modIdKeys : EntitySettingsClasses.GeneralAddEntityOnDeathMap.keySet()){
+            Map<EntityType<?>, Object> innerMap = EntitySettingsClasses.GeneralAddEntityOnDeathMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<EntityType<?>, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(entity == entry.getKey() && removeEvent.equals(BlockEvents.RemoveEvent.AddEntityOnBreak)
+                            && entry.getValue() instanceof EntitySettingsClasses.AddEntityOnDeath settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(entity);
+                        return;
+                    }
+                }
+            }
+        }
+
+        for(String modIdKeys : EntitySettingsClasses.GeneralDropItemOnDeathMap.keySet()){
+            Map<EntityType<?>, Object> innerMap = EntitySettingsClasses.GeneralDropItemOnDeathMap.get(modIdKeys);
+
+            /// Search for each settings type entry
+            if(modIdKeys.contains(modId)){
+                /// Search for each settings type entry
+                for(Map.Entry<EntityType<?>, Object> entry : innerMap.entrySet()){
+                    /// Process all the data
+                    if(entity == entry.getKey() && removeEvent.equals(BlockEvents.RemoveEvent.DropItemOnBreak)
+                            && entry.getValue() instanceof EntitySettingsClasses.DropItemOnDeathSettings settings){
+                        //Here is called to make easier future improvements
+                        innerMap.remove(entity);
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     /**

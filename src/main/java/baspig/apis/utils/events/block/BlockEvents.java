@@ -22,14 +22,16 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 
 /**This class gives you some easy config block events
  * @author Baspig_
  */
 @SuppressWarnings("unused")
 @ApiStatus.NonExtendable
-public class BlockEvents {
+public final class BlockEvents {
     static Random random = new Random();
 
     /**
@@ -52,7 +54,6 @@ public class BlockEvents {
             double z = pos.getZ() + 0.5 + face.getOffsetZ() * 0.51 + (face.getOffsetZ() == 0 ? (random.nextDouble() - 0.5) * spread : 0);
 
             world.addParticleClient(particle, x, y, z, 0, 0, 0);
-
         }
     }
 
@@ -624,7 +625,6 @@ public class BlockEvents {
         };
     }
 
-
     private final String modId; //The mod id into a final String
 
     /**
@@ -635,11 +635,6 @@ public class BlockEvents {
     public BlockEvents(String modId, String referenceId){
         /// Creation of a secure events creation to avoid overwrite other mods events.
         this.modId = modId + ":" + referenceId;
-    }
-
-    public enum Mode{
-        AdIfAbsent,
-        Replace
     }
 
     public enum RemoveEvent{
@@ -664,7 +659,7 @@ public class BlockEvents {
                 for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
                     /// Process all the data
                     if(block == entry.getKey() && removeEvent.equals(RemoveEvent.AddEntityOnBreak)
-                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings settings){
+                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings){
                         //Here is called to make easier future improvements
                         innerMap.remove(block);
                         return;
@@ -681,7 +676,7 @@ public class BlockEvents {
                 for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
                     /// Process all the data
                     if(block == entry.getKey() && removeEvent.equals(RemoveEvent.DropItemOnBreak)
-                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings settings){
+                            && entry.getValue() instanceof BlockSettingClasses.DropItemObBreakSettings){
                         //Here is called to make easier future improvements
                         innerMap.remove(block);
                         return;
@@ -699,7 +694,7 @@ public class BlockEvents {
                 for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
                     /// Process all the data
                     if(block == entry.getKey() && removeEvent.equals(RemoveEvent.ExplodeOnBreak)
-                            && entry.getValue() instanceof BlockSettingClasses.ExplodeOnBreakSettings settings){
+                            && entry.getValue() instanceof BlockSettingClasses.ExplodeOnBreakSettings){
                         //Here is called to make easier future improvements
                         innerMap.remove(block);
                         return;
@@ -716,7 +711,7 @@ public class BlockEvents {
                 for(Map.Entry<Block, Object> entry : innerMap.entrySet()){
                     /// Process all the data
                     if(block == entry.getKey() && removeEvent.equals(RemoveEvent.PlaySoundOnBreak)
-                            && entry.getValue() instanceof BlockSettingClasses.PlaySoundOnBreakSettings settings){
+                            && entry.getValue() instanceof BlockSettingClasses.PlaySoundOnBreakSettings){
                         //Here is called to make easier future improvements
                         innerMap.remove(block);
                         return;
