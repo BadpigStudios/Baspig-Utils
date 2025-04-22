@@ -1,17 +1,19 @@
 package baspig.apis.utils.events.block;
 
 import baspig.apis.utils.util.ShapeType;
-import baspig.apis.utils.util.block.Offset;
+import baspig.apis.utils.util.pos.Offset;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
 
 /**
  * This generates and manages some data to make easier to handle.
- * @Author : Baspig_
+ * @author : Baspig_
  */
 @SuppressWarnings("unused")
+@ApiStatus.NonExtendable
 public class ParticleSettings{
     private final Random random = new Random();
     private final ParticleEffect particleEffect;

@@ -16,9 +16,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static baspig.apis.utils.util.BP.*;
+import static baspig.apis.utils.util.BP.LOG;
 
 /**
  * This class is made for quick and fast json file management.

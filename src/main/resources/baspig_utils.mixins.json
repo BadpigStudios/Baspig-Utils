@@ -4,6 +4,7 @@
   "package": "baspig.apis.utils.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "entity.ServerPlayerEntityMixin"
   ],
   "client": [
   ],

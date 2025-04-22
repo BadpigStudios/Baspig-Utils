@@ -10,6 +10,7 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
@@ -18,7 +19,8 @@ import java.util.Random;
  * @author Baspig_
  */
 @SuppressWarnings("unused")
-public class ItemEvents {
+@ApiStatus.NonExtendable
+public final class ItemEvents {
     private static final Random random = new Random();
 
     public static boolean playerHasInHand(PlayerEntity playerEntity, TagKey<Item> toolTag){
@@ -64,7 +66,7 @@ public class ItemEvents {
      * @param hand The actual player hand, the selected item
      * @param quantity Amount of items that will remove from the hand
      */
-    public static void removeItemInHand(@NotNull PlayerEntity player, Hand hand, byte quantity) {
+    public static void removeItemInHand(PlayerEntity player, Hand hand, byte quantity) {
         if (!player.getWorld().isClient) {
             ItemStack stack = player.getStackInHand(hand);
             if (!stack.isEmpty()) {

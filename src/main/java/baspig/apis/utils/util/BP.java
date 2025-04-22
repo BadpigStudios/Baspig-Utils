@@ -1,6 +1,7 @@
 package baspig.apis.utils.util;
 
 import baspig.apis.utils.Baspig_utils;
+import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Baspig_
  */
 @SuppressWarnings("unused")
+@ApiStatus.NonExtendable
 public class BP {
 
     public static final Logger LOG = LoggerFactory.getLogger(Baspig_utils.MOD_ID);
@@ -178,9 +180,5 @@ public class BP {
             return "[" + Class +" - " + methodName +"]-- " + messageAdditions;
 
         }
-    }
-
-    private interface LogOptions{
-        void hasLog();
     }
 }
