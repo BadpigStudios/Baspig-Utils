@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "baspig_utils:item/draw_entity_edit_tool"
+  }
+}

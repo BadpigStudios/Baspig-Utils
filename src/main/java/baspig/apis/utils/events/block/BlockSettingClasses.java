@@ -26,7 +26,6 @@ class BlockSettingClasses {
         boolean fireSpread;
 
         protected ExplodeOnBreakSettings(float power, TagKey<Item> toolTag, float rate, boolean fireSpread) {
-
             this.toolTag = toolTag;
             this.rate = rate;
             this.power = power;

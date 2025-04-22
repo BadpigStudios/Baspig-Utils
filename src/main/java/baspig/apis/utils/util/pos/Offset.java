@@ -1,4 +1,4 @@
-package baspig.apis.utils.util.block;
+package baspig.apis.utils.util.pos;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -8,7 +8,7 @@ import java.util.Random;
  * The Offset class represents a 3D offset with x, y, and z coordinates.
  * It optionally supports adding a random offset to the coordinates.
  *
- * @Author Baspig_
+ * @author Baspig_
  */
 @SuppressWarnings("unused")
 public class Offset {
@@ -131,6 +131,7 @@ public class Offset {
             minRandomOffset = 0;
             maxRandomOffset = 1;
         }
+
         this.hasRandomOffset = true;
         this.minRandomOffset = minRandomOffset;
         this.maxRandomOffset = maxRandomOffset;

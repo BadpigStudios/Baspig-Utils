@@ -1,12 +1,12 @@
 package baspig.apis.utils.register.easifier;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 
 import java.util.Map;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 class RegisterEntityRenderer {
 
