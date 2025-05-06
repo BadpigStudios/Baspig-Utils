@@ -1,9 +1,9 @@
 package baspig.apis.utils.util.pos;
 
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Math;
 import org.joml.Vector3f;
 
 import java.util.List;
@@ -268,5 +268,45 @@ public class PosUtils {
             v4.add(0,1,0);
         }
         return List.of(v1, v2, v3, v4);
+    }
+
+    public static Vector3f calculateRelativeCenter(Vector3f firstVector, Vector3f secondVector){
+        return new Vector3f(
+                firstVector.x + secondVector.x / 2,
+                firstVector.y + secondVector.y / 2,
+                firstVector.z + secondVector.z / 2
+        );
+    }
+
+    public static Vector3f roundVector3f(RoundMode mode, Vector3f vector){
+        if(mode.equals(RoundMode.Up))
+            return new Vector3f(
+                    Math.ceil(vector.x),
+                    Math.ceil(vector.y),
+                    Math.ceil(vector.z)
+            );
+        else if(mode.equals(RoundMode.Down))
+            return new Vector3f(
+                Math.floor(vector.x),
+                Math.floor(vector.y),
+                Math.floor(vector.z));
+        else return vector;
+    }
+
+    public static Vector3f roundVector3f( Vector3f vector){
+        return new Vector3f(
+                vector.x > 5 ? Math.ceil(vector.x) : Math.floor(vector.x),
+                vector.y > 5 ? Math.ceil(vector.y) : Math.floor(vector.y),
+                vector.z > 5 ? Math.ceil(vector.z) : Math.floor(vector.z)
+        );
+    }
+
+    public enum RoundMode{
+        Up,
+        Down
+    }
+
+    public static Vec3d vector3fToVec3d(Vector3f vector){
+        return new Vec3d(vector);
     }
 }

@@ -70,9 +70,9 @@ public class ExtraItemTags {
     }
 
     /**
-     * Internal register for the item tags
+     * Internal Register for the item tags
      * @param id ID of the tag, like: "explosive_blocks"
-     * @return The register to make it work
+     * @return The Register to make it work
      */
     private static TagKey<Item> of(String id) {
         return TagKey.of(RegistryKeys.ITEM, Identifier.of(Baspig_utils.MOD_ID,id));

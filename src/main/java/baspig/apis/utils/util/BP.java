@@ -18,21 +18,21 @@ public class BP {
 
     public static final Logger LOG = LoggerFactory.getLogger(Baspig_utils.MOD_ID);
 
-    public static final String classColor = ConsoleColors.YELLOW;
+    public static final String classColor = LogColors.YELLOW;
 
-    public static final String enumColor = ConsoleColors.PURPLE;
+    public static final String enumColor = LogColors.PURPLE;
 
-    public static final String methodColor = ConsoleColors.GREEN;
+    public static final String methodColor = LogColors.GREEN;
 
-    public static final String numberColor = ConsoleColors.CYAN_BRIGHT;
+    public static final String numberColor = LogColors.CYAN_BRIGHT;
 
-    public static final String stringColor = ConsoleColors.GREEN_BRIGHT;
+    public static final String stringColor = LogColors.GREEN_BRIGHT;
 
-    public static final String booleanColor = ConsoleColors.YELLOW_BRIGHT;
+    public static final String booleanColor = LogColors.YELLOW_BRIGHT;
 
-    public static final String errorColor = ConsoleColors.RED;
+    public static final String errorColor = LogColors.RED;
 
-    public static final String nullColor = ConsoleColors.RED_BRIGHT;
+    public static final String nullColor = LogColors.RED_BRIGHT;
 
     /**
      * It's a faster way to test it. Recommendable to use object colors into it ny hand.

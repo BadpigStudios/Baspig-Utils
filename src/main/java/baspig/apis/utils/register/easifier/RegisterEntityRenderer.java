@@ -15,7 +15,7 @@ class RegisterEntityRenderer {
 
     /**
      * Register a single entity renderer
-     * @param entityType The type of entity to register
+     * @param entityType The type of entity to Register
      * @param rendererFactory The factory for creating the renderer
      */
     public static <T extends Entity> void register(
@@ -27,7 +27,7 @@ class RegisterEntityRenderer {
     }
 
     /**
-     * Batch register multiple entity renderers
+     * Batch Register multiple entity renderers
      * @param rendererMap Map of entity types to their renderer factories
      */
     @SuppressWarnings("unchecked")

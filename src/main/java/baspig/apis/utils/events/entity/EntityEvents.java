@@ -3,16 +3,20 @@ package baspig.apis.utils.events.entity;
 import baspig.apis.utils.ModID;
 import baspig.apis.utils.events.block.BlockEvents;
 import baspig.apis.utils.events.item.ItemEvents;
+import baspig.apis.utils.register.RegistryKeyOf;
 import baspig.apis.utils.util.BP;
-import baspig.apis.utils.util.ConsoleColors;
 import baspig.apis.utils.util.GeneralUtils;
+import baspig.apis.utils.util.LogColors;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +31,30 @@ import java.util.Random;
 @SuppressWarnings("unused")
 @ApiStatus.NonExtendable
 public final class EntityEvents {
+
+    public static class Register{
+        public static <T extends Entity> EntityType<T> entityType(Identifier identifier, EntityType.EntityFactory<T> factory, EntityType.Builder<T> builder){
+            return register(identifier, factory, builder);
+        }
+
+        private static <T extends Entity> EntityType<T> register
+                (Identifier identifier, EntityType.EntityFactory<T> factory, EntityType.Builder<T> builder){
+            if(identifier == null) throw new IllegalArgumentException(
+                    "Identifier of '" + LogColors.tintBlue("Register Entity")  + "' is" + LogColors.getNullText());
+
+            if(factory == null) throw new IllegalArgumentException(
+                    "Factory of '" + LogColors.tintBlue("Register Entity")  + "' is" + LogColors.getNullText());
+
+            if(builder == null) throw new IllegalArgumentException(
+                    "Builder of '" + LogColors.tintBlue("Register Entity")  + "' is " + LogColors.getNullText());
+
+            return Registry.register(
+                    Registries.ENTITY_TYPE,
+                    identifier,
+                    builder.build(RegistryKeyOf.entity(identifier))
+            );
+        }
+    }
     static Random random = new Random();
 
     /**
@@ -254,12 +282,12 @@ public final class EntityEvents {
         if (stackTrace.length > 2) {
             String clasWhoCallThis = stackTrace[2].getClassName();
             if(!clasWhoCallThis.equals("baspig.apis.utils.Baspig_utils") && !Objects.equals(id.toString(), "baspig_utils")){
-                String r = ConsoleColors.RESET;
-                String red = ConsoleColors.RED;
-                String yellow = ConsoleColors.YELLOW;
-                String lightBlue = ConsoleColors.BLUE_BRIGHT;
+                String r = LogColors.RESET;
+                String red = LogColors.RED;
+                String yellow = LogColors.YELLOW;
+                String lightBlue = LogColors.BLUE_BRIGHT;
 
-                BP.LOG.warn("Other mod is trying to access and register/modify Easy events. It's being called by class: {}{}", yellow, clasWhoCallThis);
+                BP.LOG.warn("Other mod is trying to access and Register/modify Easy events. It's being called by class: {}{}", yellow, clasWhoCallThis);
             }
         }
 

@@ -1,21 +1,33 @@
 package baspig.apis.utils.events.block;
 
 import baspig.apis.utils.ModID;
+import baspig.apis.utils.events.block.register.presets.TntBlockPreset;
+import baspig.apis.utils.events.block.register.settings.ExtraBlockSettings;
 import baspig.apis.utils.events.entity.EntityEvents;
 import baspig.apis.utils.events.item.ItemEvents;
 import baspig.apis.utils.util.*;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -32,6 +44,120 @@ import java.util.Random;
 @SuppressWarnings("unused")
 @ApiStatus.NonExtendable
 public final class BlockEvents {
+
+    /**
+     * The implementation of the existing minecraft/fabric block registerBlock into block events
+     * @author Baspig_
+     */
+    public static class Register {
+
+        /**
+         * Registers a Block Entity for an existing Block(s)
+         *
+         * @param identifier The Identifier of the block.
+         * @param factory The factory to reference the Entity Block
+         *                <pre>{@code DrawBlockEntity::new}</pre>
+         *
+         * @param blocks The blocks to have the Entity Block function
+         *
+         * @return the registered value for your Block Entity Var declaration
+         */
+        public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(
+                Identifier identifier,
+                FabricBlockEntityTypeBuilder.Factory<T> factory,
+                Block... blocks){
+            return Registry.register(
+                    Registries.BLOCK_ENTITY_TYPE,
+                    identifier,
+                    FabricBlockEntityTypeBuilder.create(factory, blocks).build()
+            );
+        }
+
+        /**
+         * Registers a default Minecraft Block with the given settings
+         *
+         * @param identifier The identifier of the block
+         * @param settings The settings of the block
+         *                 <pre>{@code AbstractBlock.Settings.create().nonOpaque().registryKey(drawerBlockKey)}</pre>
+         * @param item If the block should have an item
+         * @return the registered value for your Block Var declaration.
+         */
+        public static Block block(Identifier identifier, AbstractBlock.Settings settings, boolean item){
+            RegistryKey<Block> BlockKey = RegistryKey.of(
+                    RegistryKeys.BLOCK,
+                    identifier);
+
+            return registerBlock(
+                    new Block(settings.registryKey(BlockKey)),
+                    BlockKey, item);
+        }
+
+        /**
+         * Registers a default Minecraft Block with the given settings
+         *
+         * @param block The settings of the block
+         *                 <pre>{@code AbstractBlock.Settings.create().nonOpaque().registryKey(drawerBlockKey)}</pre>
+         * @param item If the block should have an item
+         * @return the registered value for your Block Var declaration.
+         */
+        public static Block block(Identifier identifier, Block block, boolean item){
+            RegistryKey<Block> BlockKey = RegistryKey.of(
+                    RegistryKeys.BLOCK,
+                    identifier);
+
+            return registerBlock(
+                    block,
+                    BlockKey, item);
+        }
+
+        /**
+         * Registers a default Minecraft Block with the given settings
+         *
+         * @param registryKey The registry key for the block and item.
+         * @param block The settings of the block
+         *                 <pre>{@code AbstractBlock.Settings.create().nonOpaque().registryKey(drawerBlockKey)}</pre>
+         * @param item If the block should have an item
+         * @return the registered value for your Block Var declaration.
+         */
+        public static Block block(RegistryKey<Block> registryKey, Block block, boolean item){
+            RegistryKey<Block> BlockKey = RegistryKey.of(
+                    RegistryKeys.BLOCK,
+                    registryKey.getValue());
+
+            return registerBlock(
+                    block,
+                    BlockKey, item);
+        }
+
+        ///
+        ///
+        public static Block TntBlock(RegistryKey<Block> registryKey, AbstractBlock.Settings settings, ExtraBlockSettings blockSettings, boolean item){
+            RegistryKey<Block> BlockKey = RegistryKey.of(
+                    RegistryKeys.BLOCK,
+                    registryKey.getValue());
+
+            return registerBlock(
+                    new TntBlockPreset(settings.registryKey(BlockKey), blockSettings),
+                    BlockKey, item);
+        }
+
+        private static Block registerBlock(Block block, RegistryKey<Block> blockKey, boolean shouldRegisterItem) {
+            if (shouldRegisterItem) {
+                RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, blockKey.getValue());
+                Registry.register(Registries.ITEM,
+                        itemKey,
+                        new BlockItem(
+                                block, new Item.Settings().registryKey(itemKey)
+                        )
+                );
+            }
+            return Registry.register(Registries.BLOCK, blockKey, block);
+        }
+    }
+
+
+
+    /// Utility stuff
     static Random random = new Random();
 
     /**
@@ -1104,12 +1230,12 @@ public final class BlockEvents {
         if (stackTrace.length > 2) {
             String clasWhoCallThis = stackTrace[2].getClassName();
             if(!clasWhoCallThis.equals("baspig.apis.utils.Baspig_utils") && !Objects.equals(id.toString(), "baspig_utils")){
-                String r = ConsoleColors.RESET;
-                String red = ConsoleColors.RED;
-                String yellow = ConsoleColors.YELLOW;
-                String lightBlue = ConsoleColors.BLUE_BRIGHT;
+                String r = LogColors.RESET;
+                String red = LogColors.RED;
+                String yellow = LogColors.YELLOW;
+                String lightBlue = LogColors.BLUE_BRIGHT;
 
-                BP.LOG.warn("Other mod is trying to access and register/modify Easy events. It's being called by class: {}{}", yellow, clasWhoCallThis);
+                BP.LOG.warn("Other mod is trying to access and registerBlock/modify Easy events. It's being called by class: {}{}", yellow, clasWhoCallThis);
             }
         }
 

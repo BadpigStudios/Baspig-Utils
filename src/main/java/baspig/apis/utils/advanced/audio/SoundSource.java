@@ -5,7 +5,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
 /**
- * This is a short way to register and run all the system for sound source objects
+ * This is a short way to Register and run all the system for sound source objects
  *
  * @Author Baspig_
  */
