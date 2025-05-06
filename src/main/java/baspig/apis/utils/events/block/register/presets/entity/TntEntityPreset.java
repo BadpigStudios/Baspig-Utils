@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public class TntEntityPreset extends Entity implements Ownable {
     private static final TrackedData<Integer> FUSE = DataTracker.registerData(TntEntityPreset.class, TrackedDataHandlerRegistry.INTEGER);
     private static final TrackedData<BlockState> BLOCK_STATE = DataTracker.registerData(TntEntityPreset.class, TrackedDataHandlerRegistry.BLOCK_STATE);

@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PosUtils {
     /**
      * It converts the first 3 double array index values to a Vec3d
